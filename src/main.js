@@ -19,23 +19,25 @@
 
 	// HELPER FUNCTIONS
 
-	function collectStar (player, star) {
-		
-		// Removes the star from the screen
-		star.kill();
-
+	// Loads and displays a level to play from a given index
+	function loadLevel(num) {
+		// implement this
 	}
 
-	// Loads and displays a level to play
-	function loadLevel(num) {
-		// stuff
+	// Displays the main menu
+	function displayMainMenu() {
+		// implement this - should show a play button at least
+	}
+
+	// Displays the game over screen
+	function displayGameOver() {
+		// implement this - should somehow lead back to main menu
 	}
 
 	// MAIN PHASER FUNCTIONS
 
 	// Preload assets
 	function preload() {
-
 		//game.load.image('sky', 'assets/sky.png');
 		//game.load.image('ground', 'assets/platform.png');
 		game.load.image('player', 'assets/star.png');
@@ -70,6 +72,9 @@
 			'd': Phaser.Keyboard.D,
 			'attack': Phaser.Keyboard.SPACEBAR
 		});
+
+		// Display main menu
+		displayMainMenu();
 	}
 
 	// The main game loop
