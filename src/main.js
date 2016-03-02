@@ -49,7 +49,7 @@
 		// Enable the Arcade Physics system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		//  A simple background for our game
+		// A simple background for our game
 		//game.add.sprite(0, 0, 'sky');
 
 		// Create a group for the bacteria
@@ -58,8 +58,6 @@
 		// The player and its settings
 		player = game.add.sprite(32, game.world.height - 150, 'player');
 		game.physics.arcade.enable(player);
-
-		// Player physics properties. Give the little guy a slight bounce
 		player.body.collideWorldBounds = true;
 
 		// Keyboard controls
@@ -77,10 +75,10 @@
 	// The main game loop
 	function update() {
 
-		//  Collide the player and the stars with the platforms
+		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
 
-		//  Reset the player's velocity (movement)
+		//  Reset the player's velocity
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
 
