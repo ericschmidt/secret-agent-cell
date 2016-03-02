@@ -11,26 +11,32 @@
 	var MOVE_SPEED = 150;
 
 	// GAME VARIABLES
-	var player;
 	var bacteria;
 	var cursors;
 	var keys;
+	var player;
+	var playing;
+
+	// The Phaser game instance
 	var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 	// HELPER FUNCTIONS
 
 	// Loads and displays a level to play from a given index
 	function loadLevel(num) {
+		playing = true;
 		// implement this
 	}
 
 	// Displays the main menu
 	function displayMainMenu() {
+		playing = false;
 		// implement this - should show a play button at least
 	}
 
 	// Displays the game over screen
 	function displayGameOver() {
+		playing = false;
 		// implement this - should somehow lead back to main menu
 	}
 
@@ -64,7 +70,6 @@
 
 		// Keyboard controls
 		cursors = game.input.keyboard.createCursorKeys();
-		console.log(game.input.keyboard);
 		keys = game.input.keyboard.addKeys({
 			'w': Phaser.Keyboard.W,
 			'a': Phaser.Keyboard.A,
@@ -79,6 +84,8 @@
 
 	// The main game loop
 	function update() {
+		// Do nothing if not playing a level
+		if (!playing) return;
 
 		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
