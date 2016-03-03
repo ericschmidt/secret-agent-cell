@@ -8,6 +8,7 @@
 (function() {
 
 	// CONSTANTS
+	var GRID_SIZE = 50;
 	var MOVE_SPEED = 150;
 
 	// GAME VARIABLES
@@ -25,6 +26,22 @@
 	// Loads and displays a level to play from a given index
 	function loadLevel(num) {
 		playing = true;
+		// implement this
+		if (num >= window._levels.length) {
+			// tried to load a level past the final level
+			// game complete
+		} else {
+			var level = window._levels[num];
+			// Initialize the player
+			player.visible = true;
+			player.x = level.playerStart.x * GRID_SIZE;
+			player.y = level.playerStart.y * GRID_SIZE;
+		}
+	}
+
+	// Tears down the current level
+	function unloadLevel() {
+		playing = false;
 		// implement this
 	}
 
