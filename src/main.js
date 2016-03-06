@@ -24,8 +24,6 @@
 	var firingCounter = 0; // int holding when the bac can fire
 	var bulletSpeed = 150;
 	var growthCounter = 0; // Counter to determine when bacteria grow
-	
-	var explosions;
 
 	var cursors;
 	var keys;
@@ -185,7 +183,7 @@
 		enemyBullets = game.add.group();
 		enemyBullets.enableBody = true;
 		enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-		enemyBullets.createMultiple(30, 'enemyBullet');
+		enemyBullets.createMultiple(3000, 'enemyBullet');
 		enemyBullets.setAll('anchor.x', 0.5);
 		enemyBullets.setAll('anchor.y', 1);
 		enemyBullets.setAll('outOfBoundsKill', true);
@@ -196,14 +194,8 @@
 		bacteria.enableBody = true;
 		bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 		clearBacteriaGrid();
-		spawnBacteria(2, 2);
+		spawnBacteria(4, 4);
 		
-		// Explosion pool
-		explosions = game.add.group();
-		explosions.createMultiple(30, 'kaboom');
-		//explosions.forEach(destroyBacteria, this);
-
-
 		health = 3;
     	healthbar = game.add.sprite(32, game.world.height - 75, 'health_32');
 
@@ -260,16 +252,16 @@
 			growBacteria();
 			growthCounter = 0;
 		}
-
-		//Bac fires
-		//firingCounter++;
-		if (firingCounter === 1500)
-		{
-			firingCounter=0;
-			fourWay();
-		}
-
+		
 		// Increment counters
+		bacteria.forEach(function(d){
+			d.counter++;
+			if (d.counter == 127){
+				d.counter = 0;
+				fourWay(d);
+			}
+		});
+
 		growthCounter++;
 
 		game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
@@ -283,21 +275,21 @@
 		bac.animations.add('kaboom');
 	}
 
-	function fourWay(){
+	function fourWay(bacterium){
 
-		enemyFires(45);
-		enemyFires(135);
-		enemyFires(225);
-		enemyFires(315);
+		enemyFires(bacterium, 45);
+		enemyFires(bacterium, 135);
+		enemyFires(bacterium, 225);
+		enemyFires(bacterium, 315);
 	}
 
-	function enemyFires (angle) {
+	function enemyFires (bacterium, angle) {
 
 		//  Grab the first bullet we can from the pool
 		enemyBullet = enemyBullets.getFirstExists(false);
 	
 		//This group fires
-		enemyBullet.reset(group1.body.x+20, group1.body.y+20);
+		enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
 
 		//game.physics.arcade.moveToObject(enemyBullet,player,120);
 		game.physics.arcade.velocityFromAngle(angle, bulletSpeed, enemyBullet.body.velocity);
@@ -311,12 +303,12 @@
     	if(health==0)
     	{	
 	        healthbar.loadTexture('health_0');
+        	
         	//  And create an explosion :)
-        	var explosion = explosions.getFirstExists(false);
-        	explosion.reset(player.body.x, player.body.y);
-	        explosion.play('kaboom', 30, false, true);
-
-        	player.kill();
+        	player.loadTexture('kaboom');
+        	var boom = player.animations.add('boom');
+	        player.animations.play('boom', 100, false);
+	        playing = false;
 	        enemyBullets.callAll('kill');
 
         	stateText.text="GAME OVER";
