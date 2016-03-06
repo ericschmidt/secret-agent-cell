@@ -262,7 +262,7 @@
 		}
 
 		//Bac fires
-		firingCounter++;
+		//firingCounter++;
 		if (firingCounter === 1500)
 		{
 			firingCounter=0;
