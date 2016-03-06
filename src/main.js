@@ -71,7 +71,7 @@
 		
 		playing = false;
 		// titleLogo = game.add.sprite(100, 1250, 'title');
-    	creditsText.visible = true;
+    	// creditsText.visible = true;
     	// // add button
     	// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
     	
@@ -228,9 +228,9 @@
 		});
 
 		// Display main menu
-		creditsText.anchor.set(0.5);
-		creditsText.visible = false;
-		creditsText = game.add.text(GAME_WIDTH/2, GAME_HEIGHT/4, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
+		// creditsText.anchor.set(0.5);
+		// creditsText.visible = false;
+		// creditsText = game.add.text(GAME_WIDTH/2, GAME_HEIGHT/4, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
 		displayMainMenu();
 	}
 
