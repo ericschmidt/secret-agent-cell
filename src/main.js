@@ -14,6 +14,7 @@
 	var MOVE_SPEED = 150;
 	var SPAWN_RATE = 0.3;
 	var GROWTH_TIME = 200;
+	var SHOOT_TIME = 127;
 
 	// MENU
 	var creditsText;
@@ -25,7 +26,6 @@
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
 	var firingCounter = 0; // int holding when the bac can fire
-	var firingThreshold = 127;
 	var bulletSpeed = 150;
 	var growthCounter = 0; // Counter to determine when bacteria grow
 
@@ -257,21 +257,22 @@
 		}
 
 		// Handle bacteria growth
+		growthCounter++;
 		if (growthCounter > GROWTH_TIME) {
 			growBacteria();
 			growthCounter = 0;
 		}
 		
-		// Increment counters
+		// Handle firing counters
 		bacteria.forEach(function(d){
 			d.counter++;
-			if (d.counter === firingThreshold){
+			if (d.counter === SHOOT_TIME){
 				d.counter = 0;
 				fourWay(d);
 			}
 		});
 
-		growthCounter++;
+		
 
 		game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 	}
