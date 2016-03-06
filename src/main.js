@@ -25,6 +25,7 @@
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
 	var firingCounter = 0; // int holding when the bac can fire
+	var firingThreshold = 127;
 	var bulletSpeed = 150;
 	var growthCounter = 0; // Counter to determine when bacteria grow
 
@@ -264,7 +265,7 @@
 		// Increment counters
 		bacteria.forEach(function(d){
 			d.counter++;
-			if (d.counter == 127){
+			if (d.counter === firingThreshold){
 				d.counter = 0;
 				fourWay(d);
 			}
