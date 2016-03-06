@@ -30,6 +30,10 @@
 
 	var cursors;
 	var keys;
+
+	var health = 3;
+	var healthbar;
+	var stateText;
 	
 	var playing;
 
@@ -151,6 +155,9 @@
 		game.load.spritesheet('bacteria', 'assets/baddie.png', 32, 32);
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 		game.load.image('enemyBullet', 'assets/bullet7.png');
+		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
+    	game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
+    	game.load.image('health_0', 'assets/health_0.png');
 	}
 
 	// Initialize game
@@ -185,6 +192,10 @@
 		explosions = game.add.group();
 		explosions.createMultiple(30, 'kaboom');
 		//explosions.forEach(destroyBacteria, this);
+
+
+		health = 3;
+    	healthbar = game.add.sprite(32, game.world.height - 75, 'health_32');
 
 		//State text - invisible
 		stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
@@ -282,20 +293,36 @@
 
 
 	function enemyHitsPlayer (player,bullet) {
-	
-		bullet.kill();
+    
+    bullet.kill();
+    health--;
+    	if(health==0)
+    	{	
+	        healthbar.loadTexture('health_0');
+        	//  And create an explosion :)
+        	var explosion = explosions.getFirstExists(false);
+        	explosion.reset(player.body.x, player.body.y);
+	        explosion.play('kaboom', 30, false, true);
 
-		//  And create an explosion :)
-		var explosion = explosions.getFirstExists(false);
-		explosion.reset(player.body.x, player.body.y);
-		explosion.play('kaboom', 30, false, true);
+        	player.kill();
+	        enemyBullets.callAll('kill');
 
-		player.kill();
-		enemyBullets.callAll('kill');
-		playing = false;
-
-		stateText.text="GAME OVER";
-		stateText.visible = true;
+        	stateText.text="GAME OVER";
+	        stateText.visible = true;
+    	}
+    	else if(health==1) 
+    	{
+        	//healthbar = game.add.sprite(32, game.world.height - 75, 'health_21');
+        	healthbar.loadTexture('health_21');
+        	var drop = healthbar.animations.add('drop');
+	        healthbar.animations.play('drop', 30, false);
+    	}
+    	else if(health==2)  
+    	{
+        	var drop = healthbar.animations.add('drop');
+        	healthbar.animations.play('drop', 30, false);
+    	}
+    	else    console.log("EXCEPTION: health != 0||1||2||3");
 	}
 })();
 
