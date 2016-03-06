@@ -24,10 +24,9 @@
 	var bacteriaGrid; // A 2D array to store bacteria positions
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
-	var enemyBullet; // The individual bullet
-	var firingTimer = 0; // int holding when the bac can fire
-	var growthCounter = 0; // Counter to determine when bacteria grow
+	var firingCounter = 0; // int holding when the bac can fire
 	var bulletSpeed = 150;
+	var growthCounter = 0; // Counter to determine when bacteria grow
 	
 	var explosions;
 
@@ -202,7 +201,7 @@
 		bacteria.enableBody = true;
 		bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 		clearBacteriaGrid();
-		spawnBacteria(0, 0);
+		spawnBacteria(2, 2);
 		
 		// Explosion pool
 		explosions = game.add.group();
@@ -271,9 +270,11 @@
 		}
 
 		//Bac fires
-		if (game.time.now > firingTimer)
+		//firingCounter++;
+		if (firingCounter === 1500)
 		{
-			//fourWay();
+			firingCounter=0;
+			fourWay();
 		}
 
 		// Increment counters
@@ -291,6 +292,7 @@
 	}
 
 	function fourWay(){
+
 		enemyFires(45);
 		enemyFires(135);
 		enemyFires(225);
@@ -307,7 +309,6 @@
 
 		//game.physics.arcade.moveToObject(enemyBullet,player,120);
 		game.physics.arcade.velocityFromAngle(angle, bulletSpeed, enemyBullet.body.velocity);
-		firingTimer = game.time.now + 1500;
 	}
 
 
