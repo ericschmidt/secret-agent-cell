@@ -15,6 +15,9 @@
 	var SPAWN_RATE = 0.3;
 	var GROWTH_TIME = 200;
 
+	// MENU
+	var creditsText;
+
 	// GAME VARIABLES
 	var player;
 
@@ -63,12 +66,13 @@
 
 	// Displays the main menu
 	function displayMainMenu() {
+		
 		playing = false;
 		// titleLogo = game.add.sprite(100, 1250, 'title');
-    	// creditsText = game.add.text(GAME_WIDTH/2-65, 1600, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
+    	creditsText.visible = true;
     	// // add button
     	// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
-    	playing = true;
+    	
 	}
 
 	// Displays the game over screen
@@ -166,6 +170,7 @@
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
     	game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
     	game.load.image('health_0', 'assets/health_0.png');
+
 	}
 
 	// Initialize game
@@ -215,6 +220,9 @@
 		});
 
 		// Display main menu
+		creditsText.anchor.set(0.5);
+		creditsText.visible = false;
+		creditsText = game.add.text(GAME_WIDTH/2, GAME_HEIGHT/4, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
 		displayMainMenu();
 	}
 
