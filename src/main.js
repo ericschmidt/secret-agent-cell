@@ -66,7 +66,11 @@
 	// Displays the main menu
 	function displayMainMenu() {
 		playing = false;
-		// implement this - should show a play button at least
+		// titleLogo = game.add.sprite(100, 1250, 'title');
+    	// creditsText = game.add.text(GAME_WIDTH/2-65, 1600, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
+    	// // add button
+    	// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
+    	playing = true;
 	}
 
 	// Displays the game over screen
@@ -141,8 +145,15 @@
 
 	// Spawns a bacteria in a given grid position
 	function spawnBacteria(x, y) {
+		var playerGridX = Math.floor(player.x / GRID_SIZE);
+		var playerGridY = Math.floor(player.y / GRID_SIZE);
+		// Don't spawn if player is there
+		if (playerGridX === x && playerGridY === y) {
+			return;
+		}
 		var newBacteria = bacteria.create(x*GRID_SIZE, y*GRID_SIZE, 'bacteria');
 		newBacteria.body.immovable = true;
+		newBacteria.counter = 0;
 		bacteriaGrid[x][y] = true;
 	}
 
@@ -150,8 +161,8 @@
 
 	// Preload assets
 	function preload() {
-		game.load.image('player', 'assets/star.png');
-		game.load.spritesheet('bacteria', 'assets/baddie.png', 32, 32);
+		game.load.image('player', 'assets/agentcell.png');
+		game.load.spritesheet('bacteria', 'assets/bac1.png', 33, 33);
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 		game.load.image('enemyBullet', 'assets/bullet7.png');
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
@@ -218,7 +229,7 @@
 	// The main game loop
 	function update() {
 		// Do nothing if not playing a level
-		//if (!playing) return;
+		if (!playing) return;
 
 		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
