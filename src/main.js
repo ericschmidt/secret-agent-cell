@@ -18,6 +18,7 @@
 	var enemyBullets; //The group of enemy bullets
 	var enemyBullet; //The individual bullet
 	var firingTimer = 0; //int holding when the bac can fire
+	var bulletSpeed = 150;
 	
 	var explosions;
 
@@ -166,7 +167,7 @@
 		//Bac fires
 		if (game.time.now > firingTimer)
         {
-            enemyFires();
+            fourWay();
         }
 
         game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
@@ -180,17 +181,24 @@
     	bac.animations.add('kaboom');
 	}
 
-	//Enemy fires bullet
-	function enemyFires () {
+	function fourWay(){
+    	enemyFires(45);
+    	enemyFires(135);
+    	enemyFires(225);
+    	enemyFires(315);
+	}
+
+	function enemyFires (angle) {
 
     	//  Grab the first bullet we can from the pool
     	enemyBullet = enemyBullets.getFirstExists(false);
-	    
-	    //This group fires
-	    enemyBullet.reset(group1.body.x+16, group1.body.y+16);
+    
+    	//This group fires
+    	enemyBullet.reset(group1.body.x+20, group1.body.y+20);
 
-	    game.physics.arcade.moveToObject(enemyBullet,player,120);
-	    firingTimer = game.time.now + 1500;
+    	//game.physics.arcade.moveToObject(enemyBullet,player,120);
+    	game.physics.arcade.velocityFromAngle(angle, bulletSpeed, enemyBullet.body.velocity);
+    	firingTimer = game.time.now + 1500;
 	}
 
 
@@ -205,6 +213,7 @@
 
     	player.kill();
     	enemyBullets.callAll('kill');
+    	playing = false;
 
     	stateText.text="GAME OVER";
     	stateText.visible = true;
