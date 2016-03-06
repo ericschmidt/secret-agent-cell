@@ -67,7 +67,11 @@
 	// Displays the main menu
 	function displayMainMenu() {
 		playing = false;
-		// implement this - should show a play button at least
+		// titleLogo = game.add.sprite(100, 1250, 'title');
+    	// creditsText = game.add.text(GAME_WIDTH/2-65, 1600, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
+    	// // add button
+    	// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
+    	playing = true;
 	}
 
 	// Displays the game over screen
@@ -219,7 +223,7 @@
 	// The main game loop
 	function update() {
 		// Do nothing if not playing a level
-		//if (!playing) return;
+		if (!playing) return;
 
 		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
