@@ -12,10 +12,18 @@
 	var MOVE_SPEED = 150;
 
 	// GAME VARIABLES
+	var player;
+
 	var bacteria;
+	var enemyBullets; //The group of enemy bullets
+	var enemyBullet; //The individual bullet
+	var firingTimer = 0; //int holding when the bac can fire
+	
+	var explosions;
+
 	var cursors;
 	var keys;
-	var player;
+	
 	var playing;
 
 	// The Phaser game instance
@@ -61,12 +69,10 @@
 
 	// Preload assets
 	function preload() {
-		//game.load.image('sky', 'assets/sky.png');
-		//game.load.image('ground', 'assets/platform.png');
 		game.load.image('player', 'assets/star.png');
-		//game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-		game.load.spritesheet('bacteria', 'assets/baddie.png', 32, 32);
-
+    	game.load.spritesheet('bacteria', 'assets/baddie.png', 32, 32);
+    	game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
+    	game.load.image('enemyBullet', 'assets/bullet7.png');
 	}
 
 	// Initialize game
@@ -74,16 +80,45 @@
 		// Enable the Arcade Physics system
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		// A simple background for our game
-		//game.add.sprite(0, 0, 'sky');
+		// The player and its settings
+    	player = game.add.sprite(32, game.world.height - 150, 'player');
+    	player.anchor.setTo(0.5,0.5);
+    	game.physics.arcade.enable(player, Phaser.Physics.ARCADE);
+    	player.body.collideWorldBounds = true;
+
+    	//Enemy bullets
+    	enemyBullets = game.add.group();
+    	enemyBullets.enableBody = true;
+    	enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
+    	enemyBullets.createMultiple(30, 'enemyBullet');
+    	enemyBullets.setAll('anchor.x', 0.5);
+    	enemyBullets.setAll('anchor.y', 1);
+    	enemyBullets.setAll('outOfBoundsKill', true);
+    	enemyBullets.setAll('checkWorldBounds', true);
 
 		// Create a group for the bacteria
-		bacteria = game.add.physicsGroup();
+		bacteria = game.add.group();
+    	bacteria.enableBody = true;
+    	bacteria.physicsBodyType = Phaser.Physics.ARCADE;
+    	
+    	// Create the groups
+    	//createBacteria();
+    	group1 = bacteria.create(60, 60, 'bacteria');
+    	group1.anchor.setTo(0.5,0.5);
+    	group2 = bacteria.create(600, 300, 'bacteria');
+    	//  Cannot move through bacteria
+    	group1.body.immovable = true;
+    	group2.body.immovable = true;
 
-		// The player and its settings
-		player = game.add.sprite(32, game.world.height - 150, 'player');
-		game.physics.arcade.enable(player);
-		player.body.collideWorldBounds = true;
+    	// Explosion pool
+    	explosions = game.add.group();
+    	explosions.createMultiple(30, 'kaboom');
+    	//explosions.forEach(destroyBacteria, this);
+
+    	//State text - invisible
+    	stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
+    	stateText.anchor.setTo(0.5, 0.5);
+    	stateText.visible = false;
 
 		// Keyboard controls
 		cursors = game.input.keyboard.createCursorKeys();
@@ -102,7 +137,7 @@
 	// The main game loop
 	function update() {
 		// Do nothing if not playing a level
-		if (!playing) return;
+		//if (!playing) return;
 
 		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
@@ -127,6 +162,52 @@
 			// Move down
 			player.body.velocity.y = MOVE_SPEED;
 		}
+
+		//Bac fires
+		if (game.time.now > firingTimer)
+        {
+            enemyFires();
+        }
+
+        game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 	}
 
+	//Destroy bacteria
+	function destroyBacteria (bac) {
+
+    	bac.anchor.x = 0.5;
+    	bac.anchor.y = 0.5;
+    	bac.animations.add('kaboom');
+	}
+
+	//Enemy fires bullet
+	function enemyFires () {
+
+    	//  Grab the first bullet we can from the pool
+    	enemyBullet = enemyBullets.getFirstExists(false);
+	    
+	    //This group fires
+	    enemyBullet.reset(group1.body.x+16, group1.body.y+16);
+
+	    game.physics.arcade.moveToObject(enemyBullet,player,120);
+	    firingTimer = game.time.now + 1500;
+	}
+
+
+	function enemyHitsPlayer (player,bullet) {
+    
+    	bullet.kill();
+
+    	//  And create an explosion :)
+    	var explosion = explosions.getFirstExists(false);
+    	explosion.reset(player.body.x, player.body.y);
+    	explosion.play('kaboom', 30, false, true);
+
+    	player.kill();
+    	enemyBullets.callAll('kill');
+
+    	stateText.text="GAME OVER";
+    	stateText.visible = true;
+	}
 })();
+
