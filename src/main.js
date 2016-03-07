@@ -229,7 +229,7 @@
 	// The main game loop
 	function update() {
 		// Do nothing if not playing a level
-		if (!playing) return;
+		// if (!playing) return;
 
 		//  Collide the player with bacteria
 		game.physics.arcade.collide(player, bacteria);
