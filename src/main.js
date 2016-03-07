@@ -18,6 +18,7 @@
 	var MOVE_SPEED = 150;
 	var SHOOT_TIME = 127;
 	var SPAWN_RATE = 0.3;
+	var BULLET_SPEED = 100;
 
 	// MENU
 	var creditsText;
@@ -29,7 +30,7 @@
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
 	var firingCounter = 0; // int holding when the bac can fire
-	var bulletSpeed = 150;
+	
 	var growthCounter = 0; // Counter to determine when bacteria grow
 
 	var cursors;
@@ -325,7 +326,7 @@
 		enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
 
 		//game.physics.arcade.moveToObject(enemyBullet,player,120);
-		game.physics.arcade.velocityFromAngle(angle, bulletSpeed, enemyBullet.body.velocity);
+		game.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, enemyBullet.body.velocity);
 	}
 
 
