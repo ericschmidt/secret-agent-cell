@@ -193,7 +193,7 @@
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
 		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
 		game.load.image('health_0', 'assets/health_0.png');
-
+		game.load.audio('bloop', 'assets/bloop.wav');
 	}
 
 	// Initialize game
@@ -230,6 +230,9 @@
 		stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
 		stateText.anchor.setTo(0.5, 0.5);
 		stateText.visible = false;
+
+		//Audio
+		bloop = game.add.audio('bloop');
 
 		// Keyboard controls
 		cursors = game.input.keyboard.createCursorKeys();
@@ -300,6 +303,7 @@
 				d.counter = 0;
 				d.frame = 0;
 				fourWay(d);
+				bloop.play();
 			}
 		});
 
