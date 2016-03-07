@@ -30,7 +30,7 @@ var Game = {
 
 	preload : function() {
         // Load all the needed resources for the menu.
-        
+        game.load.image('background', './assets/background.png');
         game.load.image('player', 'assets/agentcell.png');
 		game.load.spritesheet('bacteria', 'assets/bac1.png', 33, 33);
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
@@ -38,6 +38,7 @@ var Game = {
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
 		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
 		game.load.image('health_0', 'assets/health_0.png');
+
     },
 
     create: function () {
@@ -46,6 +47,7 @@ var Game = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// The player and its settings
+		this.add.sprite(0, 0, "background");
 		player = game.add.sprite(32, game.world.height - 150, 'player');
 		player.anchor.setTo(0.5,0.5);
 		game.physics.arcade.enable(player, Phaser.Physics.ARCADE);
@@ -63,6 +65,7 @@ var Game = {
 
 		// Create a group for the bacteria
 		bacteria = game.add.group();
+		
 		bacteria.enableBody = true;
 		bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 		
@@ -245,6 +248,7 @@ var Game = {
 			return;
 		}
 		var newBacteria = bacteria.create(x*GRID_SIZE, y*GRID_SIZE, 'bacteria');
+		newBacteria.animations.add('fade', [5, 4, 3, 2, 1, 0], 10, true);
 		newBacteria.body.immovable = true;
 		newBacteria.counter = 0;
 		bacteriaGrid[x][y] = true;
@@ -262,6 +266,8 @@ var Game = {
 	},
 
 	fourWay: function(bacterium){
+
+		bacterium.animations.play('fade');
 
 		this.enemyFires(bacterium, 45);
 		this.enemyFires(bacterium, 135);

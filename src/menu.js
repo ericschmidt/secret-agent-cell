@@ -1,3 +1,5 @@
+var startButton;
+
 var Menu = {
 
     preload : function() {
@@ -12,7 +14,10 @@ var Menu = {
         // Add menu screen.
         // It will act as a button to start the game.
         this.add.sprite(0, 0, "background");
-        this.add.button(WIDTH / 2 , HEIGHT / 2, 'start', this.startGame, this);
+        startButton = this.add.button(WIDTH / 2 , HEIGHT / 2, 'start', this.startGame, this);
+        startButton.anchor.x = 0.5;
+        startButton.anchor.y = 0.5;
+
 
     },
 
