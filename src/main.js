@@ -7,14 +7,17 @@
 
 (function() {
 
-	// CONSTANTS
+	// SCREEN SIZE
 	var WIDTH = 800;
 	var HEIGHT = 600;
+
+	// GAME CONSTANTS
+	var ATTACK_RADIUS_SQUARED = 60*60;
 	var GRID_SIZE = 40;
-	var MOVE_SPEED = 150;
-	var SPAWN_RATE = 0.3;
 	var GROWTH_TIME = 200;
+	var MOVE_SPEED = 150;
 	var SHOOT_TIME = 127;
+	var SPAWN_RATE = 0.3;
 
 	// MENU
 	var creditsText;
@@ -70,10 +73,10 @@
 		
 		playing = false;
 		// titleLogo = game.add.sprite(100, 1250, 'title');
-    	// creditsText.visible = true;
-    	// // add button
-    	// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
-    	
+		// creditsText.visible = true;
+		// // add button
+		// startButton = game.add.button(GAME_WIDTH/2-105, 1500, 'button', buttonCallback, this);
+		
 	}
 
 	// Displays the game over screen
@@ -160,6 +163,17 @@
 		bacteriaGrid[x][y] = true;
 	}
 
+	// Makes the player attack
+	function attack() {
+		bacteria.forEach(function(bac) {
+			var dx = bac.x - player.x;
+			var dy = bac.y - player.y;
+			if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
+				bac.destroy();
+			}
+		});
+	}
+
 	// MAIN PHASER FUNCTIONS
 
 	// Preload assets
@@ -169,8 +183,8 @@
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 		game.load.image('enemyBullet', 'assets/bullet7.png');
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
-    	game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
-    	game.load.image('health_0', 'assets/health_0.png');
+		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
+		game.load.image('health_0', 'assets/health_0.png');
 
 	}
 
@@ -202,8 +216,9 @@
 		clearBacteriaGrid();
 		spawnBacteria(4, 4);
 		
+		// Initialize health
 		health = 3;
-    	healthbar = game.add.sprite(32, game.world.height - 75, 'health_32');
+		healthbar = game.add.sprite(32, game.world.height - 75, 'health_32');
 
 		//State text - invisible
 		stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
@@ -239,6 +254,7 @@
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
 
+		// Handle movement & attacking
 		if (cursors.left.isDown || keys.a.isDown) {
 			// Move to the left
 			player.body.velocity.x = -MOVE_SPEED;
@@ -254,6 +270,9 @@
 		if (cursors.down.isDown || keys.s.isDown) {
 			// Move down
 			player.body.velocity.y = MOVE_SPEED;
+		}
+		if (keys.attack.isDown) {
+			attack();
 		}
 
 		// Handle bacteria growth
@@ -271,8 +290,6 @@
 				fourWay(d);
 			}
 		});
-
-		
 
 		game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 	}
@@ -307,36 +324,36 @@
 
 
 	function enemyHitsPlayer (player,bullet) {
-    
-    bullet.kill();
-    health--;
-    	if(health==0)
-    	{	
-	        healthbar.loadTexture('health_0');
-        	
-        	//  And create an explosion :)
-        	player.loadTexture('kaboom');
-        	var boom = player.animations.add('boom');
-	        player.animations.play('boom', 100, false);
-	        playing = false;
-	        enemyBullets.callAll('kill');
+	
+	bullet.kill();
+	health--;
+		if(health==0)
+		{	
+			healthbar.loadTexture('health_0');
+			
+			//  And create an explosion :)
+			player.loadTexture('kaboom');
+			var boom = player.animations.add('boom');
+			player.animations.play('boom', 100, false);
+			playing = false;
+			enemyBullets.callAll('kill');
 
-        	stateText.text="GAME OVER";
-	        stateText.visible = true;
-    	}
-    	else if(health==1) 
-    	{
-        	//healthbar = game.add.sprite(32, game.world.height - 75, 'health_21');
-        	healthbar.loadTexture('health_21');
-        	var drop = healthbar.animations.add('drop');
-	        healthbar.animations.play('drop', 30, false);
-    	}
-    	else if(health==2)  
-    	{
-        	var drop = healthbar.animations.add('drop');
-        	healthbar.animations.play('drop', 30, false);
-    	}
-    	else    console.log("EXCEPTION: health != 0||1||2||3");
+			stateText.text="GAME OVER";
+			stateText.visible = true;
+		}
+		else if(health==1) 
+		{
+			//healthbar = game.add.sprite(32, game.world.height - 75, 'health_21');
+			healthbar.loadTexture('health_21');
+			var drop = healthbar.animations.add('drop');
+			healthbar.animations.play('drop', 30, false);
+		}
+		else if(health==2)  
+		{
+			var drop = healthbar.animations.add('drop');
+			healthbar.animations.play('drop', 30, false);
+		}
+		else    console.log("EXCEPTION: health != 0||1||2||3");
 	}
 })();
 
