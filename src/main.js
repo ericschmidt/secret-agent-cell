@@ -14,6 +14,7 @@
 	var MOVE_SPEED = 150;
 	var SPAWN_RATE = 0.3;
 	var GROWTH_TIME = 200;
+	var SHOOT_TIME = 127;
 
 	// MENU
 	var creditsText;
@@ -256,21 +257,22 @@
 		}
 
 		// Handle bacteria growth
+		growthCounter++;
 		if (growthCounter > GROWTH_TIME) {
 			growBacteria();
 			growthCounter = 0;
 		}
 		
-		// Increment counters
+		// Handle firing counters
 		bacteria.forEach(function(d){
 			d.counter++;
-			if (d.counter == 127){
+			if (d.counter === SHOOT_TIME){
 				d.counter = 0;
 				fourWay(d);
 			}
 		});
 
-		growthCounter++;
+		
 
 		game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
 	}
