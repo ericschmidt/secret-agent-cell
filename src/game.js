@@ -45,14 +45,13 @@
 		preload: function() {
 			// Load all the needed resources for the menu.
 			GameInstance.load.image('background', './assets/background.png');
-			GameInstance.load.image('player', 'assets/agentcell.png');
+			GameInstance.load.spritesheet('player', 'assets/agentcell.png', 33, 32);
 			GameInstance.load.spritesheet('bacteria', 'assets/bac1.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 			GameInstance.load.image('enemyBullet', 'assets/bullet7.png');
 			GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
-			GameInstance.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
-			GameInstance.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
-			GameInstance.load.image('health_0', 'assets/health_0.png');
+			GameInstance.load.image('health_border', 'assets/health_border.png');
+			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.audio('bloop', 'assets/bloop.wav');
 		},
 
@@ -71,7 +70,7 @@
 			enemyBullets = GameInstance.add.group();
 			enemyBullets.enableBody = true;
 			enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-			enemyBullets.createMultiple(3000, 'enemyBullet2');
+			enemyBullets.createMultiple(3000, 'enemyBullet');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
 			enemyBullets.setAll('outOfBoundsKill', true);
@@ -84,7 +83,9 @@
 			
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
-			healthbar = GameInstance.add.sprite(32, GameInstance.world.height - 75, 'health_32');
+			GameInstance.add.sprite(32, GameInstance.world.height - 75, 'health_border');
+			healthbar = GameInstance.add.sprite(35, GameInstance.world.height - 75 + 3, 'health_red');
+			healthbar.anchor.setTo(0,0);
 
 			// State text - invisible
 			stateText = GameInstance.add.text(GameInstance.world.centerX, GameInstance.world.centerY, ' ', { font: '84px Arial', fill: '#fff' });
@@ -328,45 +329,11 @@
 				player.loadTexture('kaboom');
 				var boom = player.animations.add('boom');
 				player.animations.play('boom', 100, false, true);
-				playing = false;
 				enemyBullets.callAll('kill');
 
 				stateText.text="GAME OVER";
 				stateText.visible = true;
 			}
-			/*
-			health--;
-			if(health==0)
-			{	
-				//healthbar.loadTexture('health_0');
-				
-				//  And create an explosion :)
-				healthbar.scale.setTo(0,1);
-
-				player.loadTexture('kaboom');
-				var boom = player.animations.add('boom');
-				player.animations.play('boom', 100, false);
-				playing = false;
-				enemyBullets.callAll('kill');
-
-				stateText.text="GAME OVER";
-				stateText.visible = true;
-			}
-			else if(health==1) 
-			{
-				//healthbar = GameInstance.add.sprite(32, GameInstance.world.height - 75, 'health_21');
-				//healthbar.loadTexture('health_21');
-				//var drop = healthbar.animations.add('drop');
-				//healthbar.animations.play('drop', 30, false);
-				healthbar.scale.setTo(0.33,1);
-			}
-			else if(health==2)  
-			{
-				PLAYER_HEALTH -= BULLET_DAMAGE;
-				healthbar.scale.setTo(0.66,1);
-			}
-			else    console.log("EXCEPTION: health != 0||1||2||3");
-			*/
 		}
 	};
 
