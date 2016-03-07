@@ -34,6 +34,7 @@ var Game = {
 		game.load.spritesheet('bacteria', 'assets/bac1.png', 33, 33);
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 		game.load.image('enemyBullet', 'assets/bullet7.png');
+		game.load.image('enemyBullet2', 'assets/bullet1.png');
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
 		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
 		game.load.image('health_0', 'assets/health_0.png');
@@ -56,9 +57,9 @@ var Game = {
 		enemyBullets = game.add.group();
 		enemyBullets.enableBody = true;
 		enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-		enemyBullets.createMultiple(3000, 'enemyBullet');
+		enemyBullets.createMultiple(3000, 'enemyBullet2');
 		enemyBullets.setAll('anchor.x', 0.5);
-		enemyBullets.setAll('anchor.y', 1);
+		enemyBullets.setAll('anchor.y', 0.5);
 		enemyBullets.setAll('outOfBoundsKill', true);
 		enemyBullets.setAll('checkWorldBounds', true);
 

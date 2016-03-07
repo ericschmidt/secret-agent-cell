@@ -13,7 +13,8 @@
 		{
 			playerStart: {x: 0, y: 0},
 			bacteriaStarts: [
-				{x: 5, y: 5}
+				{x: 5, y: 5},
+				{x: 12, y: 10}
 			]
 		}
 	];
