@@ -59,6 +59,13 @@
 			player.visible = true;
 			player.x = level.playerStart.x * GRID_SIZE;
 			player.y = level.playerStart.y * GRID_SIZE;
+			// Spawn the initial bacteria
+			bacteria.removeAll(true);
+			clearBacteriaGrid();
+			for (var i=0; i < level.bacteriaStarts.length; i++) {
+				var pos = level.bacteriaStarts[i];
+				spawnBacteria(pos.x, pos.y);
+			}
 		}
 	}
 
@@ -213,8 +220,6 @@
 		bacteria = game.add.group();
 		bacteria.enableBody = true;
 		bacteria.physicsBodyType = Phaser.Physics.ARCADE;
-		clearBacteriaGrid();
-		spawnBacteria(4, 4);
 		
 		// Initialize health
 		health = 3;
@@ -239,7 +244,8 @@
 		// creditsText.anchor.set(0.5);
 		// creditsText.visible = false;
 		// creditsText = game.add.text(GAME_WIDTH/2, GAME_HEIGHT/4, "Eric Schmidt\nLisa Ruan\nDylan Ho\nErica Yuen", {fontSize: '40px', fill: 'fff', align: 'center'});
-		displayMainMenu();
+		//displayMainMenu();
+		loadLevel(0);
 	}
 
 	// The main game loop
