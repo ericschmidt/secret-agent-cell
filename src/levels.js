@@ -8,7 +8,7 @@
 (function() {
 	
 	// All x and y coordinates are GRID coordinates!
-	window._levels = [
+	var Levels = window.Levels = [
 		// Level 0
 		{
 			playerStart: {x: 0, y: 0},
