@@ -16,7 +16,7 @@
 	var GRID_SIZE = 40;
 	var GROWTH_TIME = 200;
 	var MOVE_SPEED = 150;
-	var SHOOT_TIME = 127;
+	var SHOOT_TIME = 160; //The higher the shoot time, the lower the shooting frequency
 	var SPAWN_RATE = 0.3;
 	var BULLET_SPEED = 100;
 
@@ -292,8 +292,13 @@
 		// Handle firing counters
 		bacteria.forEach(function(d){
 			d.counter++;
+			if (d.counter === SHOOT_TIME-100){
+				d.animations.add('shooting');
+				d.animations.play('shooting', 6, false);
+			}
 			if (d.counter === SHOOT_TIME){
 				d.counter = 0;
+				d.frame = 0;
 				fourWay(d);
 			}
 		});
