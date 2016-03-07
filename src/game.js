@@ -3,7 +3,7 @@
 	var GRID_SIZE = 40;
 	var GROWTH_TIME = 200;
 	var MOVE_SPEED = 150;
-	var SHOOT_TIME = 127;
+	var SHOOT_TIME = 160;
 	var SPAWN_RATE = 0.3;
 	var BULLET_SPEED = 100;
 
@@ -14,7 +14,6 @@
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
 	var firingCounter = 0; // int holding when the bac can fire
-	
 	var growthCounter = 0; // Counter to determine when bacteria grow
 
 	var cursors;
@@ -38,7 +37,7 @@ var Game = {
 		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
 		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
 		game.load.image('health_0', 'assets/health_0.png');
-
+ 		game.load.audio('bloop', 'assets/bloop.wav');
     },
 
     create: function () {
@@ -77,6 +76,9 @@ var Game = {
 		stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
 		stateText.anchor.setTo(0.5, 0.5);
 		stateText.visible = false;
+
+		// Audio
+ 		bloop = game.add.audio('bloop');
 
 		// Keyboard controls
 		cursors = game.input.keyboard.createCursorKeys();
@@ -130,11 +132,18 @@ var Game = {
 		// Handle firing counters
 		bacteria.forEach(function(d){
 			d.counter++;
+			if (d.counter === SHOOT_TIME-100){
+				d.animations.add('shooting');
+				d.animations.play('shooting', 6, false);
+			}
 			if (d.counter === SHOOT_TIME){
 				d.counter = 0;
+				d.frame = 0;
 				Game.fourWay(d);
+				bloop.play();
 			}
 		});
+
 
 		game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
         
@@ -248,7 +257,6 @@ var Game = {
 			return;
 		}
 		var newBacteria = bacteria.create(x*GRID_SIZE, y*GRID_SIZE, 'bacteria');
-		newBacteria.animations.add('fade', [5, 4, 3, 2, 1, 0], 10, true);
 		newBacteria.body.immovable = true;
 		newBacteria.counter = 0;
 		bacteriaGrid[x][y] = true;
@@ -266,8 +274,6 @@ var Game = {
 	},
 
 	fourWay: function(bacterium){
-
-		bacterium.animations.play('fade');
 
 		this.enemyFires(bacterium, 45);
 		this.enemyFires(bacterium, 135);
