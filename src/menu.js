@@ -7,6 +7,7 @@ var Menu = {
         
         game.load.image('background', './assets/background.png');
         game.load.image('start', './assets/startLogo.png');
+        game.load.image('gameLogo', './assets/gameLogo.png');
     },
 
     create: function () {
@@ -14,7 +15,12 @@ var Menu = {
         // Add menu screen.
         // It will act as a button to start the game.
         this.add.sprite(0, 0, "background");
+        gameLogo = this.add.sprite(WIDTH / 2 , HEIGHT / 4, 'gameLogo', this);
         startButton = this.add.button(WIDTH / 2 , HEIGHT / 2, 'start', this.startGame, this);
+
+
+        gameLogo.anchor.x = 0.5;
+        gameLogo.anchor.y = 0.5;
         startButton.anchor.x = 0.5;
         startButton.anchor.y = 0.5;
 
