@@ -5,6 +5,7 @@
 	var GROWTH_TIME = 200; // Growth period, lower value - faster bac growth
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
+	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var SPAWN_RATE = 0.3;
 	var BULLET_SPEED = 200;
 	var PLAYER_MAX_HEALTH = 100;
@@ -17,9 +18,9 @@
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
 
-	var firingCounter = 0; // Counter to determine when bacteria fire
-	var growthCounter = 0; // Counter to determine when bacteria grow
-	var regenCounter = 0;
+	var firingCounter = 0; // Counter to firing
+	var growthCounter = 0; // Counter to growth
+	var regenCounter = 0; // Counter for regen
 
 	var cursors;
 	var keys;
@@ -102,9 +103,10 @@ var Game = {
     },
 
     update: function () {
+    	
     	if(playing){
-
-			//  Reset the player's velocity
+    		
+    		//  Reset the player's velocity
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
 
@@ -157,7 +159,7 @@ var Game = {
 				regenCounter++;
 				if(regenCounter>=REGEN_TIME){
 					regenCounter = 0;
-					health += 5;
+					health += REGEN_AMOUNT;
 				}
 			}
 			else	regenCounter = 0;
@@ -332,7 +334,7 @@ var Game = {
 
 			player.loadTexture('kaboom');
 			var boom = player.animations.add('boom');
-			player.animations.play('boom', 100, false);
+			player.animations.play('boom', 100, false, true);
 			playing = false;
 			enemyBullets.callAll('kill');
 
