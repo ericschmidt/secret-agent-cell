@@ -5,7 +5,9 @@
 	var MOVE_SPEED = 150;
 	var SHOOT_TIME = 160;
 	var SPAWN_RATE = 0.3;
-	var BULLET_SPEED = 100;
+	var BULLET_SPEED = 200;
+	var PLAYER_MAX_HEALTH = 100;
+	var BULLET_DAMAGE = 40;
 
 // GAME VARIABLES
 	var player;
@@ -13,13 +15,15 @@
 	var bacteriaGrid; // A 2D array to store bacteria positions
 	var bacteria; // The group of bacteria
 	var enemyBullets; // The group of enemy bullets
-	var firingCounter = 0; // int holding when the bac can fire
+
+	var firingCounter = 0; // Counter to determine when bacteria fire
 	var growthCounter = 0; // Counter to determine when bacteria grow
+	var regenCounter = 0;
 
 	var cursors;
 	var keys;
 
-	var health = 3;
+	var health = PLAYER_MAX_HEALTH;
 	var healthbar;
 	var stateText;
 	
@@ -35,9 +39,8 @@ var Game = {
 		game.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 		game.load.image('enemyBullet', 'assets/bullet7.png');
 		game.load.image('enemyBullet2', 'assets/bullet1.png');
-		game.load.spritesheet('health_32', 'assets/health32.png', 180, 40);
-		game.load.spritesheet('health_21', 'assets/health21.png', 180, 40);
-		game.load.image('health_0', 'assets/health_0.png');
+		game.load.image('health_border', 'assets/health_border.png');
+		game.load.image('health_red', 'assets/health_red.png');
  		game.load.audio('bloop', 'assets/bloop.wav');
     },
 
@@ -57,7 +60,7 @@ var Game = {
 		enemyBullets = game.add.group();
 		enemyBullets.enableBody = true;
 		enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-		enemyBullets.createMultiple(3000, 'enemyBullet2');
+		enemyBullets.createMultiple(3000, 'enemyBullet');
 		enemyBullets.setAll('anchor.x', 0.5);
 		enemyBullets.setAll('anchor.y', 0.5);
 		enemyBullets.setAll('outOfBoundsKill', true);
@@ -70,8 +73,10 @@ var Game = {
 		bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 		
 		// Initialize health
-		health = 3;
-		healthbar = game.add.sprite(32, game.world.height - 75, 'health_32');
+		health = PLAYER_MAX_HEALTH;
+		game.add.sprite(32, game.world.height - 75, 'health_border');
+		healthbar = game.add.sprite(35, game.world.height - 75 + 3, 'health_red');
+		healthbar.anchor.setTo(0,0);
 
 		//State text - invisible
 		stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
@@ -96,59 +101,60 @@ var Game = {
     },
 
     update: function () {
-    	game.physics.arcade.collide(player, bacteria);
+    	if(playing){
 
-		//  Reset the player's velocity
-		player.body.velocity.x = 0;
-		player.body.velocity.y = 0;
+			//  Reset the player's velocity
+			player.body.velocity.x = 0;
+			player.body.velocity.y = 0;
 
-		// Handle movement & attacking
-		if (cursors.left.isDown || keys.a.isDown) {
-			// Move to the left
-			player.body.velocity.x = -MOVE_SPEED;
-		}
-		if (cursors.right.isDown || keys.d.isDown) {
-			// Move to the right
-			player.body.velocity.x = MOVE_SPEED;
-		}
-		if (cursors.up.isDown || keys.w.isDown) {
-			// Move up
-			player.body.velocity.y = -MOVE_SPEED;
-		}
-		if (cursors.down.isDown || keys.s.isDown) {
-			// Move down
-			player.body.velocity.y = MOVE_SPEED;
-		}
-		if (keys.attack.isDown) {
-			this.attack();
-		}
+			// Handle movement & attacking
+			if (cursors.left.isDown || keys.a.isDown) {
+				// Move to the left
+				player.body.velocity.x = -MOVE_SPEED;
+			}
+			if (cursors.right.isDown || keys.d.isDown) {
+				// Move to the right
+				player.body.velocity.x = MOVE_SPEED;
+			}
+			if (cursors.up.isDown || keys.w.isDown) {
+				// Move up
+				player.body.velocity.y = -MOVE_SPEED;
+			}
+			if (cursors.down.isDown || keys.s.isDown) {
+				// Move down
+				player.body.velocity.y = MOVE_SPEED;
+			}
+			if (keys.attack.isDown) {
+				this.attack();
+			}
 
-		// Handle bacteria growth
-		growthCounter++;
-		if (growthCounter > GROWTH_TIME) {
-			this.growBacteria();
-			growthCounter = 0;
-		}
+			// Handle bacteria growth
+			growthCounter++;
+			if (growthCounter > GROWTH_TIME) {
+				this.growBacteria();
+				growthCounter = 0;
+			}
 		
-		// Handle firing counters
-		bacteria.forEach(function(d){
-			d.counter++;
-			if (d.counter === SHOOT_TIME-100){
-				d.animations.add('shooting');
-				d.animations.play('shooting', 6, false);
-			}
-			if (d.counter === SHOOT_TIME){
-				d.counter = 0;
-				d.frame = 0;
-				Game.fourWay(d);
-				bloop.play();
-			}
-		});
+			// Handle firing counters
+			bacteria.forEach(function(d){
+				d.counter++;
+				if (d.counter === SHOOT_TIME-100){
+					d.animations.add('shooting');
+					d.animations.play('shooting', 6, false);
+				}
+				if (d.counter === SHOOT_TIME){
+					d.counter = 0;
+					d.frame = 0;
+					//Game.fourWay(d);
+					Game.playerChaser(d);
+					bloop.play();
+				}
+			});
+			healthbar.scale.setTo(health/PLAYER_MAX_HEALTH,1);
 
-
-		game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
-        
-
+			game.physics.arcade.collide(player, bacteria);
+			game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
+		}
     },
 
     loadLevel: function (num) {
@@ -172,7 +178,6 @@ var Game = {
 				this.spawnBacteria(pos.x, pos.y);
 			}
 		}
-
     },
 
     destroyBacteria: function (bac) {
@@ -187,7 +192,7 @@ var Game = {
 
     growBacteria: function () {
 
-        		var neighborhood = [
+        var neighborhood = [
 			{x: 1, y: 0},
 			{x: -1, y: 0},
 			{x: 0, y: 1},
@@ -290,20 +295,46 @@ var Game = {
 		//This group fires
 		enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
 
-		//game.physics.arcade.moveToObject(enemyBullet,player,120);
+		//game.physics.arcade.moveToObject(enemyBullet,player,BULLET_SPEED);
 		game.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, enemyBullet.body.velocity);
 	},
 
+	//Fires 1 bullet that chases player 
+	playerChaser: function(bacterium){
+		enemyBullet = enemyBullets.getFirstExists(false);
+		enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
+		game.physics.arcade.moveToObject(enemyBullet,player,BULLET_SPEED);
+	},
 
-	enemyHitsPlayer: function (player,bullet) {
-	
-	bullet.kill();
-	health--;
-		if(health==0)
+	enemyHitsPlayer: function (player,bullet) {	
+		bullet.kill();
+		health -= BULLET_DAMAGE;
+
+		if(health<=0)
 		{	
-			healthbar.loadTexture('health_0');
+			//healthbar.loadTexture('health_0');
 			
 			//  And create an explosion :)
+			healthbar.scale.setTo(0,1);
+
+			player.loadTexture('kaboom');
+			var boom = player.animations.add('boom');
+			player.animations.play('boom', 100, false);
+			playing = false;
+			enemyBullets.callAll('kill');
+
+			stateText.text="GAME OVER";
+			stateText.visible = true;
+		}
+		/*
+		health--;
+		if(health==0)
+		{	
+			//healthbar.loadTexture('health_0');
+			
+			//  And create an explosion :)
+			healthbar.scale.setTo(0,1);
+
 			player.loadTexture('kaboom');
 			var boom = player.animations.add('boom');
 			player.animations.play('boom', 100, false);
@@ -316,16 +347,18 @@ var Game = {
 		else if(health==1) 
 		{
 			//healthbar = game.add.sprite(32, game.world.height - 75, 'health_21');
-			healthbar.loadTexture('health_21');
-			var drop = healthbar.animations.add('drop');
-			healthbar.animations.play('drop', 30, false);
+			//healthbar.loadTexture('health_21');
+			//var drop = healthbar.animations.add('drop');
+			//healthbar.animations.play('drop', 30, false);
+			healthbar.scale.setTo(0.33,1);
 		}
 		else if(health==2)  
 		{
-			var drop = healthbar.animations.add('drop');
-			healthbar.animations.play('drop', 30, false);
+			PLAYER_HEALTH -= BULLET_DAMAGE;
+			healthbar.scale.setTo(0.66,1);
 		}
 		else    console.log("EXCEPTION: health != 0||1||2||3");
+		*/
 	},
 
 	
