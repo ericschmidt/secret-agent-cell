@@ -1,9 +1,10 @@
 // GAME CONSTANTS
+	var MOVE_SPEED = 150;
 	var ATTACK_RADIUS_SQUARED = 60*60;
 	var GRID_SIZE = 40;
-	var GROWTH_TIME = 200;
-	var MOVE_SPEED = 150;
-	var SHOOT_TIME = 160;
+	var GROWTH_TIME = 200; // Growth period, lower value - faster bac growth
+	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
+	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var SPAWN_RATE = 0.3;
 	var BULLET_SPEED = 200;
 	var PLAYER_MAX_HEALTH = 100;
@@ -150,8 +151,20 @@ var Game = {
 					bloop.play();
 				}
 			});
+
+			// Healthbar animator
+			if(health < PLAYER_MAX_HEALTH){
+				regenCounter++;
+				if(regenCounter>=REGEN_TIME){
+					regenCounter = 0;
+					health += 5;
+				}
+			}
+			else	regenCounter = 0;
+
 			healthbar.scale.setTo(health/PLAYER_MAX_HEALTH,1);
 
+			// Physics checkers
 			game.physics.arcade.collide(player, bacteria);
 			game.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
 		}
