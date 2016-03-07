@@ -5,20 +5,21 @@
  * Dylan Ho, Eric Schmidt, Lisa Ruan, Erica Yuen
  */
 
-var game;
+(function() {
 
-// SCREEN SIZE
-var WIDTH = 800;
-var HEIGHT = 600;
+	// Screen size
+	var WIDTH = window.WIDTH = 800;
+	var HEIGHT = window.HEIGHT = 600;
 
-// Create a new game instance 600px wide and 450px tall:
-var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO);
+	// Create a new game instance
+	var game = window.GameInstance = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO);
 
-// First parameter is how our state will be called.
-// Second parameter is an object containing the needed methods for state functionality
-game.state.add('Menu', Menu);
-game.state.add('Game', Game);
+	// First parameter is how our state will be called.
+	// Second parameter is an object containing the needed methods for state functionality
+	game.state.add('Menu', Menu);
+	game.state.add('Game', Game);
 
+	// Start in the 'menu' state
+	game.state.start('Menu');
 
-game.state.start('Menu');
-
+})();
