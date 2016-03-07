@@ -18,7 +18,7 @@
 			// Load all the needed resources for the menu.
 			GameInstance.load.image('background', './assets/background.png');
 			GameInstance.load.image('start', './assets/startLogo.png');
-            game.load.image('gameLogo', './assets/gameLogo.png');
+            GameInstance.load.image('gameLogo', './assets/gameLogo.png');
 		},
 
 		create: function () {
