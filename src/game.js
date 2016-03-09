@@ -84,8 +84,6 @@
 
 			// Create a group for the bacteria
 			bacteria = GameInstance.add.group();
-			bacteria.setAll('anchor.x', 0.5);
-			bacteria.setAll('anchor.y', 0.5);
 			bacteria.enableBody = true;
 			bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 			
@@ -108,7 +106,7 @@
 			//Adding menu button
 			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
-            menuButton.anchor.y = 1.0;
+			menuButton.anchor.y = 1.0;
 
 			// Keyboard controls
 			cursors = GameInstance.input.keyboard.createCursorKeys();

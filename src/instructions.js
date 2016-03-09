@@ -18,9 +18,9 @@
 			// Load all the needed resources for the Instructions.
 			GameInstance.load.image('background', './assets/background.png');
 			
-            GameInstance.load.image('gameLogo', './assets/gameLogo.png');
-            GameInstance.load.image('instructionsLogo', './assets/instructionsLogo.png');
-            GameInstance.load.image('menuButton', './assets/menuLogo.png');
+			GameInstance.load.image('gameLogo', './assets/gameLogo.png');
+			GameInstance.load.image('instructionsLogo', './assets/instructionsLogo.png');
+			GameInstance.load.image('menuButton', './assets/menuLogo.png');
 
 		},
 
@@ -29,27 +29,27 @@
 			// Add Instructions screen.
 			// It will act as a button to start the game.
 			Instructions.add.sprite(0, 0, "background");
-            instructionsLogo = Instructions.add.sprite(WIDTH / 2 , HEIGHT / 6, 'instructionsLogo', Instructions);
+			instructionsLogo = Instructions.add.sprite(WIDTH / 2 , HEIGHT / 6, 'instructionsLogo', Instructions);
 
-            var style = { font: "18px Verdana", fill: "#000", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-            text = Instructions.add.text(WIDTH / 2, HEIGHT / 2 + 30,  instructionsText, style);
+			var style = { font: "18px Verdana", fill: "#000", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
+			text = Instructions.add.text(WIDTH / 2, HEIGHT / 2 + 30,  instructionsText, style);
 
 
 			
-            menuButton = Instructions.add.button(WIDTH , HEIGHT, 'menuButton', Instructions.startMenu, Instructions);
+			menuButton = Instructions.add.button(WIDTH , HEIGHT, 'menuButton', Instructions.startMenu, Instructions);
 
 
-            instructionsLogo.anchor.x = 0.5;
-            instructionsLogo.anchor.y = 0.5;
+			instructionsLogo.anchor.x = 0.5;
+			instructionsLogo.anchor.y = 0.5;
 
-            text.anchor.x = 0.5;
-            text.anchor.y = 0.5;
-
-
+			text.anchor.x = 0.5;
+			text.anchor.y = 0.5;
 
 
-            menuButton.anchor.x = 1.0;
-            menuButton.anchor.y = 1.0;
+
+
+			menuButton.anchor.x = 1.0;
+			menuButton.anchor.y = 1.0;
 		},
 
 		startGame: function () {
