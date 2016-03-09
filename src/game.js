@@ -63,6 +63,8 @@
 			// The player and its settings
 			Game.add.sprite(0, 0, "background");
 			player = GameInstance.add.sprite(0, 0, 'player');
+			player.animations.add('attack', [1]);
+			player.animations.add('default', [0]);
 			player.anchor.setTo(0.5, 0.5);
 			GameInstance.physics.arcade.enable(player, Phaser.Physics.ARCADE);
 			player.body.collideWorldBounds = true;
@@ -146,6 +148,10 @@
 			}
 			if (keys.attack.isDown) {
 				Game.attack();
+				player.animations.play('attack');
+			}
+			else{
+				player.animations.play('default');
 			}
 
 			// Handle bacteria growth
@@ -190,6 +196,10 @@
 			// Physics checkers
 			GameInstance.physics.arcade.collide(player, bacteria);
 			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
+
+			//checks you win the level
+
+
 		},
 
 		loadLevel: function(num) {
@@ -348,7 +358,10 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
+
+
 				GameInstance.state.start('GameOver');
+
 
 				// stateText.text="GAME OVER";
 				// stateText.visible = true;

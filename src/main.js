@@ -20,6 +20,7 @@
 	game.state.add('Game', Game);
 	game.state.add('Instructions', Instructions);
 	game.state.add('GameOver', GameOver);
+	game.state.add('LevelPassed', LevelPassed);
 
 	// Start in the 'menu' state
 	game.state.start('Menu');

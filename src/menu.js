@@ -22,7 +22,7 @@
 		},
 
 		create: function () {
-			console.log("background created");
+			
 			// Add menu screen.
 			// It will act as a button to start the game.
 			Menu.add.sprite(0, 0, "background");
