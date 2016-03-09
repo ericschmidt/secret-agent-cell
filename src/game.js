@@ -20,7 +20,7 @@
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
 	var ATTACK_TIME = 20; // Attack period, lower value - faster attacking
 	var SPAWN_RATE = 0.3;
-	var SCORE_TICK_TIME = 25; // Score tick time, lower value, faster uptick score
+	var SCORE_TICK_TIME = 100; // Score tick time, lower value, faster uptick score
 
 	// Game variables
 	var player;
@@ -34,9 +34,10 @@
 	var shrinkCounter = 0;  // Counter for re-shrinking
 	var attackCounter = 40;  // Counter for attacking
 	var scoreCounter = 0;
-	var gameWonTimer = 0;
+	var gameEndTimer = 0;
 
-	var gameWon = false;
+	//var gameWon = false;
+	var gameLost;
 
 	var cursors;
 	var keys;
@@ -44,7 +45,7 @@
 	var health;
 	var healthbar;
 	var score = 0;
-	var stateText;
+	var scoreText = "";
 
 	var bloop;
 
@@ -102,14 +103,14 @@
 			healthbar.anchor.setTo(0,1);
 			healthBorder.anchor.setTo(0,1);
 
-			// State text - invisible
-			stateText = GameInstance.add.text(GameInstance.world.centerX, GameInstance.world.centerY, ' ', { font: '84px Arial', fill: '#fff' });
-			stateText.anchor.setTo(0.5, 0.5);
-			stateText.visible = false;
+			// Score text
+			scoreText = GameInstance.add.text(300, 560, 'Score: 0', { font: '30px Arial', fill: '#fff' });
+			scoreText.anchor.setTo(0, 0.5);
 
 			// Audio
 			bloop = GameInstance.add.audio('bloop');
 
+			gameLost = false;
 
 			//Adding menu button
 			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
@@ -125,8 +126,6 @@
 				'd': Phaser.Keyboard.D,
 				'attack': Phaser.Keyboard.SPACEBAR
 			});
-
-			
 
 			Game.loadLevel(0);
 
@@ -188,6 +187,14 @@
 				player.animations.play('default');
 			}
 
+			// Score increase logic
+			scoreCounter++;
+			if (scoreCounter >= SCORE_TICK_TIME){
+				score += 10;
+				scoreText.text = "Score: "+score;
+				scoreCounter = 0;
+			}
+
 			// Can you attack?
 			attackCounter++;
 
@@ -221,13 +228,19 @@
 				player.animations.play('attack');
 			}
 
-			//checks you win the level
+			/*//checks you win the level
 			if (bacteria.countLiving()===0)
 				gameWon = true;
 			if (gameWon){
-				gameWonTimer++;
-				if(gameWonTimer >= 50)
+				gameEndTimer++;
+				if(gameEndTimer >= 50)
 					GameInstance.state.start('LevelPassed');
+			}*/
+
+			if (gameLost){
+				gameEndTimer++;
+				if(gameEndTimer >= 50)
+					GameInstance.state.start('GameOver');
 			}
 		},
 
@@ -393,10 +406,8 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
-				GameInstance.state.start('GameOver');
-
-				// stateText.text="GAME OVER";
-				// stateText.visible = true;
+				gameLost = true;
+				//GameInstance.state.start('GameOver');
 			}
 		},
 
