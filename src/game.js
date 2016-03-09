@@ -51,8 +51,8 @@
 			GameInstance.load.spritesheet('player', 'assets/agentcell.png', 33, 32);
 			GameInstance.load.spritesheet('bacteria', 'assets/bac1_on.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-			GameInstance.load.image('enemyBullet', 'assets/bac1bullet.png');
-			GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
+			GameInstance.load.image('bullet1Small', 'assets/bac1bullet.png');
+			//GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
@@ -76,7 +76,7 @@
 			enemyBullets = GameInstance.add.group();
 			enemyBullets.enableBody = true;
 			enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-			enemyBullets.createMultiple(3000, 'enemyBullet2');
+			enemyBullets.createMultiple(3000, 'bullet1Small');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
 			enemyBullets.setAll('outOfBoundsKill', true);
@@ -208,7 +208,7 @@
 
 			//checks you win the level
 			if (bacteria.countLiving()===0)
-				console.log("WIN");
+				GameInstance.state.start('LevelPassed');
 		},
 
 		loadLevel: function(num) {
@@ -322,7 +322,14 @@
 				if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
 					bac.destroy();
 				}
-			});
+			})
+			bacteria.forEach(function(bac) {
+				var dx = bac.x - player.x;
+				var dy = bac.y - player.y;
+				if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
+					bac.destroy();
+				}
+			})
 		},
 
 		// The diagonal cross shooting pattern
@@ -366,10 +373,7 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
-
-
 				GameInstance.state.start('GameOver');
-
 
 				// stateText.text="GAME OVER";
 				// stateText.visible = true;
