@@ -8,7 +8,7 @@
 (function() {
 
 	// Game constants
-	var MOVE_SPEED = 150;
+	var MOVE_SPEED = 180;
 	var ATTACK_RADIUS_SQUARED = 60*60;
 	var BULLET_DAMAGE = 40;
 	var BULLET_SPEED = 200;
@@ -18,6 +18,7 @@
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
+	var ATTACK_TIME = 40; // Attack period, lower value - faster attacking
 	var SPAWN_RATE = 0.3;
 
 	// Game variables
@@ -29,6 +30,8 @@
 	var firingCounter = 0;	// Counter determining when bacteria can fire
 	var growthCounter = 0;	// Counter to determine when bacteria grow
 	var regenCounter = 0;	// Counter for regen
+	var shrinkCounter = 0;  // Counter for re-shrinking
+	var attackCounter = 40;  // Counter for attacking
 
 	var cursors;
 	var keys;
@@ -53,7 +56,7 @@
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
-			// GameInstance.load.audio('bloop', 'assets/bloop.wav');
+			GameInstance.load.audio('bloop', 'assets/bloop.wav');
 		},
 
 		create: function() {
@@ -73,7 +76,7 @@
 			enemyBullets = GameInstance.add.group();
 			enemyBullets.enableBody = true;
 			enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-			enemyBullets.createMultiple(3000, 'enemyBullet');
+			enemyBullets.createMultiple(3000, 'enemyBullet2');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
 			enemyBullets.setAll('outOfBoundsKill', true);
@@ -81,6 +84,8 @@
 
 			// Create a group for the bacteria
 			bacteria = GameInstance.add.group();
+			bacteria.setAll('anchor.x', 0.5);
+			bacteria.setAll('anchor.y', 0.5);
 			bacteria.enableBody = true;
 			bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 			
@@ -97,7 +102,7 @@
 			stateText.visible = false;
 
 			// Audio
-			// bloop = GameInstance.add.audio('bloop');
+			bloop = GameInstance.add.audio('bloop');
 
 
 			//Adding menu button
@@ -125,6 +130,58 @@
 
 			GameInstance.physics.arcade.collide(player, bacteria);
 
+			// Handle bacteria growth
+			growthCounter++;
+			if (growthCounter > GROWTH_TIME) {
+				Game.growBacteria();
+				growthCounter = 0;
+			}
+		
+			// Handle firing counters
+			bacteria.forEach(function(d){
+				d.counter++;
+				if (d.counter === SHOOT_TIME-100){
+					d.animations.add('shooting');
+					d.animations.play('shooting', 6, false);
+				}
+				if (d.counter === SHOOT_TIME){
+					d.counter = 0;
+					d.frame = 0;
+					//Game.fourWay(d);
+					Game.playerChaser(d);
+					bloop.play();
+				}
+			});
+
+			// Healthbar animator
+			if (health < PLAYER_MAX_HEALTH) {
+				regenCounter++;
+				if (regenCounter >= REGEN_TIME) {
+					regenCounter = 0;
+					health += REGEN_AMOUNT;
+				}
+			} else {
+				regenCounter = 0;
+			}
+
+			if (health > 0){
+				healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
+			}
+
+			// Reshrinking animator
+			shrinkCounter++;
+			if (shrinkCounter >= 4){
+				player.scale.setTo(1,1);
+				player.animations.play('default');
+			}
+
+			// Can you attack?
+			attackCounter++;
+
+			// Physics checkers
+			GameInstance.physics.arcade.collide(player, bacteria);
+			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
+
 			//  Reset the player's velocity
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
@@ -146,60 +203,14 @@
 				// Move down
 				player.body.velocity.y = MOVE_SPEED;
 			}
-			if (keys.attack.isDown) {
+			if (keys.attack.isDown && attackCounter > ATTACK_TIME) {
 				Game.attack();
 				player.animations.play('attack');
 			}
-			else{
-				player.animations.play('default');
-			}
-
-			// Handle bacteria growth
-			growthCounter++;
-			if (growthCounter > GROWTH_TIME) {
-				Game.growBacteria();
-				growthCounter = 0;
-			}
-		
-			// Handle firing counters
-			bacteria.forEach(function(d){
-				d.counter++;
-				if (d.counter === SHOOT_TIME-100){
-					d.animations.add('shooting');
-					d.animations.play('shooting', 6, false);
-				}
-				if (d.counter === SHOOT_TIME){
-					d.counter = 0;
-					d.frame = 0;
-					//Game.fourWay(d);
-					Game.playerChaser(d);
-					// bloop.play();
-				}
-			});
-
-			// Healthbar animator
-			if (health < PLAYER_MAX_HEALTH) {
-				regenCounter++;
-				if (regenCounter >= REGEN_TIME) {
-					regenCounter = 0;
-					health += REGEN_AMOUNT;
-				}
-			} else {
-				regenCounter = 0;
-			}
-
-			if (health > 0){
-				healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
-
-			}
-			
-			// Physics checkers
-			GameInstance.physics.arcade.collide(player, bacteria);
-			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
 
 			//checks you win the level
-
-
+			if (bacteria.countLiving()===0)
+				console.log("WIN");
 		},
 
 		loadLevel: function(num) {
@@ -223,10 +234,6 @@
 
 
 			}
-		},
-
-		destroyBacteria: function(bac) {
-			bac.animations.add('kaboom');
 		},
 
 		growBacteria: function() {
@@ -308,6 +315,9 @@
 
 		// Makes the player attack
 		attack: function() {
+			player.scale.setTo(1.5, 1.5);
+			shrinkCounter = 0;
+			attackCounter = 0;
 			bacteria.forEach(function(bac) {
 				var dx = bac.x - player.x;
 				var dy = bac.y - player.y;
