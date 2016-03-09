@@ -18,7 +18,7 @@
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
-	var ATTACK_TIME = 40; // Attack period, lower value - faster attacking
+	var ATTACK_TIME = 20; // Attack period, lower value - faster attacking
 	var SPAWN_RATE = 0.3;
 
 	// Game variables
@@ -32,6 +32,9 @@
 	var regenCounter = 0;	// Counter for regen
 	var shrinkCounter = 0;  // Counter for re-shrinking
 	var attackCounter = 40;  // Counter for attacking
+	var gameWonTimer = 0;
+
+	var gameWon = false;
 
 	var cursors;
 	var keys;
@@ -135,8 +138,15 @@
 				growthCounter = 0;
 			}
 		
+			// Handle bullet destroy
+			enemyBullets.forEach(function(d) {
+				if (d.y > 520){
+					d.kill();
+				}
+			});
+
 			// Handle firing counters
-			bacteria.forEach(function(d){
+			bacteria.forEach(function(d) {
 				d.counter++;
 				if (d.counter === SHOOT_TIME-100){
 					d.animations.add('shooting');
@@ -208,7 +218,12 @@
 
 			//checks you win the level
 			if (bacteria.countLiving()===0)
-				GameInstance.state.start('LevelPassed');
+				gameWon = true;
+			if (gameWon){
+				gameWonTimer++;
+				if(gameWonTimer >= 50)
+					GameInstance.state.start('LevelPassed');
+			}
 		},
 
 		loadLevel: function(num) {
