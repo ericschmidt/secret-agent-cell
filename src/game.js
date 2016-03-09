@@ -18,8 +18,9 @@
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
-	var ATTACK_TIME = 40; // Attack period, lower value - faster attacking
+	var ATTACK_TIME = 20; // Attack period, lower value - faster attacking
 	var SPAWN_RATE = 0.3;
+	var SCORE_TICK_TIME = 25; // Score tick time, lower value, faster uptick score
 
 	// Game variables
 	var player;
@@ -32,12 +33,17 @@
 	var regenCounter = 0;	// Counter for regen
 	var shrinkCounter = 0;  // Counter for re-shrinking
 	var attackCounter = 40;  // Counter for attacking
+	var scoreCounter = 0;
+	var gameWonTimer = 0;
+
+	var gameWon = false;
 
 	var cursors;
 	var keys;
 
 	var health;
 	var healthbar;
+	var score = 0;
 	var stateText;
 
 	var bloop;
@@ -79,6 +85,8 @@
 			enemyBullets.createMultiple(3000, 'bullet1Small');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
+			enemyBullets.setAll('scale.x', 0.5);
+			enemyBullets.setAll('scale.y', 0.5);
 			enemyBullets.setAll('outOfBoundsKill', true);
 			enemyBullets.setAll('checkWorldBounds', true);
 
@@ -135,8 +143,15 @@
 				growthCounter = 0;
 			}
 		
+			// Handle bullet destroy
+			enemyBullets.forEach(function(d) {
+				if (d.y > 520){
+					d.kill();
+				}
+			});
+
 			// Handle firing counters
-			bacteria.forEach(function(d){
+			bacteria.forEach(function(d) {
 				d.counter++;
 				if (d.counter === SHOOT_TIME-100){
 					d.animations.add('shooting');
@@ -208,7 +223,12 @@
 
 			//checks you win the level
 			if (bacteria.countLiving()===0)
-				GameInstance.state.start('LevelPassed');
+				gameWon = true;
+			if (gameWon){
+				gameWonTimer++;
+				if(gameWonTimer >= 50)
+					GameInstance.state.start('LevelPassed');
+			}
 		},
 
 		loadLevel: function(num) {
@@ -342,20 +362,20 @@
 
 		enemyFires: function(bacterium, angle) {
 			// Grab the first bullet we can from the pool
-			enemyBullet = enemyBullets.getFirstExists(false);
+			bulletInstance = enemyBullets.getFirstExists(false);
 		
 			// This group fires
-			enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
+			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
 
-			//GameInstance.physics.arcade.moveToObject(enemyBullet,player,120);
-			GameInstance.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, enemyBullet.body.velocity);
+			//GameInstance.physics.arcade.moveToObject(bulletInstance,player,120);
+			GameInstance.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, bulletInstance.body.velocity);
 		},
 
 		// Fires 1 bullet that chases player 
 		playerChaser: function(bacterium) {
-			enemyBullet = enemyBullets.getFirstExists(false);
-			enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
-			GameInstance.physics.arcade.moveToObject(enemyBullet,player,BULLET_SPEED);
+			bulletInstance = enemyBullets.getFirstExists(false);
+			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
+			GameInstance.physics.arcade.moveToObject(bulletInstance,player,BULLET_SPEED);
 		},
 
 		enemyHitsPlayer: function(player, bullet) {	
