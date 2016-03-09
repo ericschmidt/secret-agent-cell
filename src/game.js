@@ -52,7 +52,8 @@
 			GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
-			GameInstance.load.audio('bloop', 'assets/bloop.wav');
+			GameInstance.load.image('menuButton', './assets/menuLogo.png');
+			// GameInstance.load.audio('bloop', 'assets/bloop.wav');
 		},
 
 		create: function() {
@@ -60,7 +61,7 @@
 			GameInstance.physics.startSystem(Phaser.Physics.ARCADE);
 
 			// The player and its settings
-			this.add.sprite(0, 0, "background");
+			Game.add.sprite(0, 0, "background");
 			player = GameInstance.add.sprite(0, 0, 'player');
 			player.anchor.setTo(0.5, 0.5);
 			GameInstance.physics.arcade.enable(player, Phaser.Physics.ARCADE);
@@ -83,9 +84,10 @@
 			
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
-			GameInstance.add.sprite(32, GameInstance.world.height - 75, 'health_border');
-			healthbar = GameInstance.add.sprite(35, GameInstance.world.height - 75 + 3, 'health_red');
-			healthbar.anchor.setTo(0,0);
+			healthBorder = GameInstance.add.sprite(15, GameInstance.world.height - 15 , 'health_border');
+			healthbar = GameInstance.add.sprite(15 + 3, GameInstance.world.height - 15 - 3, 'health_red');
+			healthbar.anchor.setTo(0,1);
+			healthBorder.anchor.setTo(0,1);
 
 			// State text - invisible
 			stateText = GameInstance.add.text(GameInstance.world.centerX, GameInstance.world.centerY, ' ', { font: '84px Arial', fill: '#fff' });
@@ -93,7 +95,13 @@
 			stateText.visible = false;
 
 			// Audio
-			bloop = GameInstance.add.audio('bloop');
+			// bloop = GameInstance.add.audio('bloop');
+
+
+			//Adding menu button
+			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
+			menuButton.anchor.x = 1.0;
+            menuButton.anchor.y = 1.0;
 
 			// Keyboard controls
 			cursors = GameInstance.input.keyboard.createCursorKeys();
@@ -105,11 +113,14 @@
 				'attack': Phaser.Keyboard.SPACEBAR
 			});
 
-			this.loadLevel(0);
+			
+
+			Game.loadLevel(0);
 
 		},
 
 		update: function() {
+
 			GameInstance.physics.arcade.collide(player, bacteria);
 
 			//  Reset the player's velocity
@@ -134,13 +145,13 @@
 				player.body.velocity.y = MOVE_SPEED;
 			}
 			if (keys.attack.isDown) {
-				this.attack();
+				Game.attack();
 			}
 
 			// Handle bacteria growth
 			growthCounter++;
 			if (growthCounter > GROWTH_TIME) {
-				this.growBacteria();
+				Game.growBacteria();
 				growthCounter = 0;
 			}
 		
@@ -156,7 +167,7 @@
 					d.frame = 0;
 					//Game.fourWay(d);
 					Game.playerChaser(d);
-					bloop.play();
+					// bloop.play();
 				}
 			});
 
@@ -170,15 +181,19 @@
 			} else {
 				regenCounter = 0;
 			}
-			healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
 
+			if (health > 0){
+				healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
+
+			}
+			
 			// Physics checkers
 			GameInstance.physics.arcade.collide(player, bacteria);
-			GameInstance.physics.arcade.overlap(enemyBullets, player, this.enemyHitsPlayer, null, this);
+			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
 		},
 
 		loadLevel: function(num) {
-			// implement this
+			// implement Game
 			if (num >= window.Levels.length) {
 				// tried to load a level past the final level
 				// game complete
@@ -190,11 +205,13 @@
 				player.y = level.playerStart.y * GRID_SIZE;
 				// Spawn the initial bacteria
 				bacteria.removeAll(true);
-				this.clearBacteriaGrid();
+				Game.clearBacteriaGrid();
 				for (var i=0; i < level.bacteriaStarts.length; i++) {
 					var pos = level.bacteriaStarts[i];
-					this.spawnBacteria(pos.x, pos.y);
+					Game.spawnBacteria(pos.x, pos.y);
 				}
+
+
 			}
 		},
 
@@ -218,8 +235,8 @@
 				for (var j=0; j < neighborhood.length; j++) {
 					var neighborX = gridX + neighborhood[j].x;
 					var neighborY = gridY + neighborhood[j].y;
-					if (this.inGridBounds(neighborX, neighborY) && !this.bacteriaAt(neighborX, neighborY)
-						&& !this.containsPosition(perimeter, neighborX, neighborY)) {
+					if (Game.inGridBounds(neighborX, neighborY) && !Game.bacteriaAt(neighborX, neighborY)
+						&& !Game.containsPosition(perimeter, neighborX, neighborY)) {
 						perimeter.push({x: neighborX, y: neighborY});
 					}
 				}
@@ -227,7 +244,7 @@
 			// Spawn bacteria along the perimeter
 			for (var i=0; i < perimeter.length; i++) {
 				if (Math.random() < SPAWN_RATE) {
-					this.spawnBacteria(perimeter[i].x, perimeter[i].y);
+					Game.spawnBacteria(perimeter[i].x, perimeter[i].y);
 				}
 			}
 		},
@@ -292,10 +309,10 @@
 
 		// The diagonal cross shooting pattern
 		fourWay: function(bacterium) {
-			this.enemyFires(bacterium, 45);
-			this.enemyFires(bacterium, 135);
-			this.enemyFires(bacterium, 225);
-			this.enemyFires(bacterium, 315);
+			Game.enemyFires(bacterium, 45);
+			Game.enemyFires(bacterium, 135);
+			Game.enemyFires(bacterium, 225);
+			Game.enemyFires(bacterium, 315);
 		},
 
 		enemyFires: function(bacterium, angle) {
@@ -331,9 +348,16 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
-				stateText.text="GAME OVER";
-				stateText.visible = true;
+				GameInstance.state.start('GameOver');
+
+				// stateText.text="GAME OVER";
+				// stateText.visible = true;
 			}
+		},
+
+		startMenu: function () {
+			// Change the state to the actual game.
+			Game.state.start('Menu');
 		}
 	};
 

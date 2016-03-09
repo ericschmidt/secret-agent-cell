@@ -18,6 +18,8 @@
 	// Second parameter is an object containing the needed methods for state functionality
 	game.state.add('Menu', Menu);
 	game.state.add('Game', Game);
+	game.state.add('Instructions', Instructions);
+	game.state.add('GameOver', GameOver);
 
 	// Start in the 'menu' state
 	game.state.start('Menu');
