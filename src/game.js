@@ -45,7 +45,7 @@
 
 	var health;
 	var healthbar;
-	var score = 0;
+	var score;
 	var scoreText = "";
 
 	var bloop;
@@ -114,6 +114,7 @@
 			bloop = GameInstance.add.audio('bloop');
 
 			gameLost = false;
+			score = 0;
 
 			//Adding menu button
 			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
@@ -429,8 +430,8 @@
 				healthbar.scale.setTo(0,1);
 
 				player.loadTexture('kaboom');
-				var boom = player.animations.add('boom');
-				player.animations.play('boom', 100, false, true);
+				player.animations.add('boom');
+				player.animations.play('boom', 16, false, true);
 				enemyBullets.callAll('kill');
 
 				gameLost = true;
