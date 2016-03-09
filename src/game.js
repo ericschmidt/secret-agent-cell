@@ -47,11 +47,11 @@
 
 		preload: function() {
 			// Load all the needed resources for the menu.
-			GameInstance.load.image('background', './assets/background.png');
+			GameInstance.load.image('background', './assets/background_on.png');
 			GameInstance.load.spritesheet('player', 'assets/agentcell.png', 33, 32);
-			GameInstance.load.spritesheet('bacteria', 'assets/bac1.png', 33, 33);
+			GameInstance.load.spritesheet('bacteria', 'assets/bac1_on.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-			GameInstance.load.image('enemyBullet', 'assets/bullet7.png');
+			GameInstance.load.image('enemyBullet', 'assets/bac1bullet.png');
 			GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
@@ -84,8 +84,6 @@
 
 			// Create a group for the bacteria
 			bacteria = GameInstance.add.group();
-			bacteria.setAll('anchor.x', 0.5);
-			bacteria.setAll('anchor.y', 0.5);
 			bacteria.enableBody = true;
 			bacteria.physicsBodyType = Phaser.Physics.ARCADE;
 			
@@ -108,7 +106,7 @@
 			//Adding menu button
 			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
-            menuButton.anchor.y = 1.0;
+			menuButton.anchor.y = 1.0;
 
 			// Keyboard controls
 			cursors = GameInstance.input.keyboard.createCursorKeys();
