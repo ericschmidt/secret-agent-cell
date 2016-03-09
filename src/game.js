@@ -210,7 +210,7 @@
 
 			//checks you win the level
 			if (bacteria.countLiving()===0)
-				console.log("WIN");
+				GameInstance.state.start('LevelPassed');
 		},
 
 		loadLevel: function(num) {
@@ -324,7 +324,14 @@
 				if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
 					bac.destroy();
 				}
-			});
+			})
+			bacteria.forEach(function(bac) {
+				var dx = bac.x - player.x;
+				var dy = bac.y - player.y;
+				if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
+					bac.destroy();
+				}
+			})
 		},
 
 		// The diagonal cross shooting pattern
@@ -368,10 +375,7 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
-
-
 				GameInstance.state.start('GameOver');
-
 
 				// stateText.text="GAME OVER";
 				// stateText.visible = true;
