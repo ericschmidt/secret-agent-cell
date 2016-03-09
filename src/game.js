@@ -9,7 +9,7 @@
 
 	// Game constants
 	var ATTACK_RADIUS_SQUARED = 60*60;
-	var ATTACK_TIME = 40; // Attack period, lower value - faster attacking
+	var ATTACK_TIME = 20; // Attack period, lower value - faster attacking
 	var BULLET_DAMAGE = 40;
 	var BULLET_SPEED = 200;
 	var GRID_SIZE = 40;
@@ -21,6 +21,7 @@
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
 	var SPAWN_RATE = 0.3;
+	var SCORE_TICK_TIME = 25; // Score tick time, lower value, faster uptick score
 
 	// Game variables
 	var player;
@@ -33,12 +34,17 @@
 	var regenCounter = 0;		// Counter for regen
 	var shrinkCounter = 0;		// Counter for re-shrinking
 	var attackCounter = 40;		// Counter for attacking
+	var scoreCounter = 0;
+	var gameWonTimer = 0;
+
+	var gameWon = false;
 
 	var cursors;
 	var keys;
 
 	var health;
 	var healthbar;
+	var score = 0;
 	var stateText;
 
 	var bloop;
@@ -48,14 +54,14 @@
 
 		preload: function() {
 			// Load all the needed resources for the menu.
-			GameInstance.load.image('background', './assets/background.png');
+			GameInstance.load.image('background', './assets/background_on.png');
 			GameInstance.load.spritesheet('player', 'assets/agentcell.png', 33, 32);
-			GameInstance.load.spritesheet('bacteria1', 'assets/bac1.png', 33, 33);
+			GameInstance.load.spritesheet('bacteria1', 'assets/bac1_on.png', 33, 33);
 			GameInstance.load.spritesheet('bacteria2', 'assets/bac2.png', 40, 40);
 			GameInstance.load.spritesheet('bacteria3', 'assets/bac3.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-			GameInstance.load.image('enemyBullet', 'assets/bullet7.png');
-			GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
+			GameInstance.load.image('bullet1Small', 'assets/bac1bullet.png');
+			//GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
@@ -79,9 +85,11 @@
 			enemyBullets = GameInstance.add.group();
 			enemyBullets.enableBody = true;
 			enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
-			enemyBullets.createMultiple(3000, 'enemyBullet2');
+			enemyBullets.createMultiple(3000, 'bullet1Small');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
+			enemyBullets.setAll('scale.x', 0.5);
+			enemyBullets.setAll('scale.y', 0.5);
 			enemyBullets.setAll('outOfBoundsKill', true);
 			enemyBullets.setAll('checkWorldBounds', true);
 
@@ -134,6 +142,13 @@
 				growthCounter = 0;
 			}
 		
+			// Handle bullet destroy
+			enemyBullets.forEach(function(d) {
+				if (d.y > 520){
+					d.kill();
+				}
+			});
+
 			// Handle firing counters
 			for (var i=0; i < bacteriaGroups.length; i++) {
 				bacteriaGroups[i].forEach(function(d){
@@ -363,20 +378,20 @@
 
 		enemyFires: function(bacterium, angle) {
 			// Grab the first bullet we can from the pool
-			enemyBullet = enemyBullets.getFirstExists(false);
+			bulletInstance = enemyBullets.getFirstExists(false);
 		
 			// This group fires
-			enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
+			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
 
-			//GameInstance.physics.arcade.moveToObject(enemyBullet,player,120);
-			GameInstance.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, enemyBullet.body.velocity);
+			//GameInstance.physics.arcade.moveToObject(bulletInstance,player,120);
+			GameInstance.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, bulletInstance.body.velocity);
 		},
 
 		// Fires 1 bullet that chases player 
 		playerChaser: function(bacterium) {
-			enemyBullet = enemyBullets.getFirstExists(false);
-			enemyBullet.reset(bacterium.body.x+20, bacterium.body.y+20);
-			GameInstance.physics.arcade.moveToObject(enemyBullet,player,BULLET_SPEED);
+			bulletInstance = enemyBullets.getFirstExists(false);
+			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
+			GameInstance.physics.arcade.moveToObject(bulletInstance,player,BULLET_SPEED);
 		},
 
 		enemyHitsPlayer: function(player, bullet) {	
@@ -394,10 +409,7 @@
 				player.animations.play('boom', 100, false, true);
 				enemyBullets.callAll('kill');
 
-
-
 				GameInstance.state.start('GameOver');
-
 
 				// stateText.text="GAME OVER";
 				// stateText.visible = true;
