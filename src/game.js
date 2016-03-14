@@ -64,9 +64,9 @@
 			GameInstance.load.spritesheet('bacteria2', 'assets/bac2.png', 40, 40);
 			GameInstance.load.spritesheet('bacteria3', 'assets/bac3.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
-			GameInstance.load.image('bullet1Small', 'assets/bac1bullet.png');
-			GameInstance.load.image('bullet2Small', 'assets/bac2bullet.png');
-			GameInstance.load.image('bullet3Small', 'assets/bac3bullet.png');
+			GameInstance.load.image('bullet1Small', 'assets/bac1bulletdark.png');
+			GameInstance.load.image('bullet2Small', 'assets/bac2bulletdark.png');
+			GameInstance.load.image('bullet3Small', 'assets/bac3bulletdark.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
