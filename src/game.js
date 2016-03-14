@@ -48,7 +48,8 @@
 	var score;
 	var scoreText = "";
 
-	var bloop;
+	var shootSound;
+	var gameMusic;
 
 	// Phaser functions
 	var Game = window.Game = {
@@ -66,7 +67,8 @@
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
-			GameInstance.load.audio('bloop', 'assets/bloop.wav');
+			GameInstance.load.audio('shootSound', 'assets/bloop.wav');
+			GameInstance.load.audio('gameMusic', 'assets/game_loop.wav');
 		},
 
 		create: function() {
@@ -112,7 +114,9 @@
 			scoreText.anchor.setTo(0, 0.5);
 
 			// Audio
-			bloop = GameInstance.add.audio('bloop');
+			shootSound = GameInstance.add.audio('shootSound');
+			gameMusic = GameInstance.add.audio('gameMusic');
+			gameMusic.loopFull(0.2);
 
 			gameLost = false;
 			score = 0;
@@ -133,7 +137,6 @@
 			});
 
 			Game.loadLevel(0);
-
 		},
 
 		update: function() {
@@ -148,7 +151,7 @@
 		
 			// Handle bullet destroy
 			enemyBullets.forEach(function(d) {
-				if (d.y > 520){
+				if (d.y > MAX_Y){
 					d.kill();
 				}
 			});
@@ -166,7 +169,7 @@
 						d.frame = 0;
 						//Game.fourWay(d);
 						Game.playerChaser(d);
-						bloop.play();
+						shootSound.play();
 					}
 				});
 			}
@@ -227,7 +230,7 @@
 				// Move up
 				player.body.velocity.y = -MOVE_SPEED;
 			}
-			if (cursors.down.isDown || keys.s.isDown) {
+			if ((cursors.down.isDown || keys.s.isDown) && player.y < MAX_Y - 10) {
 				// Move down
 				player.body.velocity.y = MOVE_SPEED;
 			}
@@ -245,10 +248,12 @@
 					GameInstance.state.start('LevelPassed');
 			}*/
 
-			if (gameLost){
+			if (gameLost) {
 				gameEndTimer++;
-				if(gameEndTimer >= 50)
+				if (gameEndTimer >= 50) {
+					gameMusic.stop();
 					GameInstance.state.start('GameOver');
+				}
 			}
 		},
 
@@ -441,7 +446,8 @@
 		},
 
 		startMenu: function () {
-			// Change the state to the actual game.
+			gameMusic.stop();
+			// Change the state to the menu
 			GameInstance.state.start('Menu');
 		}
 	};
