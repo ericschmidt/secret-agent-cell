@@ -19,9 +19,9 @@
 	var PLAYER_MAX_HEALTH = 100;
 	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
-	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
-	var SHOOT_TIME1 = 300; // Shooting period, lower value - faster shooting
-	var SHOOT_TIME2 = 300; // Shooting period, lower value - faster shooting
+	var SHOOT_TIME = 180; // Shooting period for bac group 1, lower value - faster shooting
+	var SHOOT_TIME1 = 300; // Shooting period for bac group 2, lower value - faster shooting
+	var SHOOT_TIME2 = 300; // Shooting period for bac group 3, lower value - faster shooting
 	var SPAWN_RATE = 0.3;
 	var SCORE_TICK_TIME = 100; // Score tick time, lower value, faster uptick score
 
@@ -66,7 +66,7 @@
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 			GameInstance.load.image('bullet1Small', 'assets/bac1bullet.png');
 			GameInstance.load.image('bullet2Small', 'assets/bac2bullet.png');
-			GameInstance.load.image('bullet2Small', 'assets/bac2bullet.png');
+			GameInstance.load.image('bullet3Small', 'assets/bac3bullet.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
@@ -115,7 +115,7 @@
 			enemyBullets3 = GameInstance.add.group();
 			enemyBullets3.enableBody = true;
 			enemyBullets3.physicsBodyType = Phaser.Physics.ARCADE;
-			enemyBullets3.createMultiple(3000, 'bullet2Small');
+			enemyBullets3.createMultiple(3000, 'bullet3Small');
 			enemyBullets3.setAll('anchor.x', 0.5);
 			enemyBullets3.setAll('anchor.y', 0.5);
 			enemyBullets3.setAll('scale.x', 0.5);
@@ -220,7 +220,7 @@
 							d.frame = 0;
 							shootSound.play();
 							//Game.playerChaser(d);
-							Game.fourWay(d);
+							Game.fourWayCross(d);
 						}
 					}
 					else{
@@ -233,7 +233,7 @@
 							d.frame = 0;
 							shootSound.play();
 							//Game.playerChaser(d);
-							Game.fourWay(d);
+							Game.fourWayPlus(d);
 						}
 					}
 				});
@@ -478,16 +478,34 @@
 		},
 
 		// The diagonal cross shooting pattern
-		fourWay: function(bacterium) {
-			Game.enemyFires(bacterium, 45);
-			Game.enemyFires(bacterium, 135);
-			Game.enemyFires(bacterium, 225);
-			Game.enemyFires(bacterium, 315);
+		fourWayCross: function(bacterium) {
+			Game.enemyFiresCross(bacterium, 45);
+			Game.enemyFiresCross(bacterium, 135);
+			Game.enemyFiresCross(bacterium, 225);
+			Game.enemyFiresCross(bacterium, 315);
 		},
 
-		enemyFires: function(bacterium, angle) {
+		enemyFiresCross: function(bacterium, angle) {
 			// Grab the first bullet we can from the pool
 			bulletInstance = enemyBullets2.getFirstExists(false);
+		
+			// This group fires
+			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
+
+			//GameInstance.physics.arcade.moveToObject(bulletInstance,player,120);
+			GameInstance.physics.arcade.velocityFromAngle(angle, BULLET_SPEED, bulletInstance.body.velocity);
+		},
+
+		fourWayPlus: function(bacterium) {
+			Game.enemyFiresPlus(bacterium, 0);
+			Game.enemyFiresPlus(bacterium, 90);
+			Game.enemyFiresPlus(bacterium, 180);
+			Game.enemyFiresPlus(bacterium, 270);
+		},
+
+		enemyFiresPlus: function(bacterium, angle) {
+			// Grab the first bullet we can from the pool
+			bulletInstance = enemyBullets3.getFirstExists(false);
 		
 			// This group fires
 			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
