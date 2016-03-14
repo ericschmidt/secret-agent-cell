@@ -20,6 +20,7 @@
 	GameInstance.state.add('Game', Game);
 	GameInstance.state.add('Instructions', Instructions);
 	GameInstance.state.add('GameOver', GameOver);
+	GameInstance.state.add('Credits', Credits);
 	GameInstance.state.add('LevelPassed', LevelPassed);
 
 	// Start in the 'menu' state
