@@ -74,7 +74,7 @@
 			GameInstance.physics.startSystem(Phaser.Physics.ARCADE);
 
 			// The player and its settings
-			Game.add.sprite(0, 0, "background");
+			GameInstance.add.sprite(0, 0, "background");
 			player = GameInstance.add.sprite(0, 0, 'player');
 			player.animations.add('attack', [1]);
 			player.animations.add('default', [0]);
@@ -95,6 +95,7 @@
 			enemyBullets.setAll('checkWorldBounds', true);
 
 			// Create 3 groups for the bacteria strains
+			bacteriaGroups = [];
 			bacteriaGroups.push(GameInstance.add.physicsGroup());
 			bacteriaGroups.push(GameInstance.add.physicsGroup());
 			bacteriaGroups.push(GameInstance.add.physicsGroup());
@@ -116,8 +117,8 @@
 			gameLost = false;
 			score = 0;
 
-			//Adding menu button
-			menuButton = Game.add.button(WIDTH , HEIGHT, 'menuButton', Game.startMenu, Game);
+			// Adding menu button
+			menuButton = GameInstance.add.button(WIDTH, HEIGHT, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
 			menuButton.anchor.y = 1.0;
 
@@ -204,7 +205,7 @@
 			attackCounter++;
 
 			// Physics checkers
-			for(var i=0; i < bacteriaGroups.length; i++) {
+			for (var i=0; i < bacteriaGroups.length; i++) {
 				GameInstance.physics.arcade.collide(player, bacteriaGroups[i]);
 			}
 			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
@@ -441,7 +442,7 @@
 
 		startMenu: function () {
 			// Change the state to the actual game.
-			Game.state.start('Menu');
+			GameInstance.state.start('Menu');
 		}
 	};
 

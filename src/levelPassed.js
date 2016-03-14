@@ -28,15 +28,15 @@
 			
 			// Add LevelPassed screen.
 			// It will act as a button to start the game.
-			LevelPassed.add.sprite(0, 0, "background");
-			levelPassedLogo = LevelPassed.add.sprite(WIDTH / 2 , HEIGHT / 3, 'levelPassedLogo', LevelPassed);
+			GameInstance.add.sprite(0, 0, "background");
+			levelPassedLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 3, 'levelPassedLogo', LevelPassed);
 
 			var style = { font: "30px Verdana", fill: "#111", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			text = LevelPassed.add.text(WIDTH / 2, HEIGHT / 2 + 20,  levelPassedText, style);
+			text = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 20,  levelPassedText, style);
 
 
 			
-			menuButton = LevelPassed.add.button(WIDTH , HEIGHT, 'menuButton', LevelPassed.startMenu, LevelPassed);
+			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', LevelPassed.startMenu, LevelPassed);
 
 
 			levelPassedLogo.anchor.x = 0.5;
@@ -58,12 +58,12 @@
 
 		startMenu: function () {
 			// Change the state to the actual game.
-			LevelPassed.state.start('Menu');
+			GameInstance.state.start('Menu');
 		},
 		update: function () {
 			// Change the state to the actual game.
 			if(keys.replay.isDown){
-				LevelPassed.state.start('Game');
+				GameInstance.state.start('Game');
 			}
 			
 		}

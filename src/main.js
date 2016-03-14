@@ -11,18 +11,18 @@
 	var WIDTH = window.WIDTH = 800;
 	var HEIGHT = window.HEIGHT = 600;
 
-	// Create a new game instance
-	var game = window.GameInstance = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO);
+	// Create a new game instance (which is global so all files can access it)
+	window.GameInstance = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO);
 
 	// First parameter is how our state will be called.
 	// Second parameter is an object containing the needed methods for state functionality
-	game.state.add('Menu', Menu);
-	game.state.add('Game', Game);
-	game.state.add('Instructions', Instructions);
-	game.state.add('GameOver', GameOver);
-	game.state.add('LevelPassed', LevelPassed);
+	GameInstance.state.add('Menu', Menu);
+	GameInstance.state.add('Game', Game);
+	GameInstance.state.add('Instructions', Instructions);
+	GameInstance.state.add('GameOver', GameOver);
+	GameInstance.state.add('LevelPassed', LevelPassed);
 
 	// Start in the 'menu' state
-	game.state.start('Menu');
+	GameInstance.state.start('Menu');
 
 })();

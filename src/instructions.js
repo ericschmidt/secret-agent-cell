@@ -28,15 +28,15 @@
 			
 			// Add Instructions screen.
 			// It will act as a button to start the game.
-			Instructions.add.sprite(0, 0, "background");
-			instructionsLogo = Instructions.add.sprite(WIDTH / 2 , HEIGHT / 6, 'instructionsLogo', Instructions);
+			GameInstance.add.sprite(0, 0, "background");
+			instructionsLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 6, 'instructionsLogo', Instructions);
 
 			var style = { font: "18px Verdana", fill: "#000", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			text = Instructions.add.text(WIDTH / 2, HEIGHT / 2 + 30,  instructionsText, style);
+			text = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 30,  instructionsText, style);
 
 
 			
-			menuButton = Instructions.add.button(WIDTH , HEIGHT, 'menuButton', Instructions.startMenu, Instructions);
+			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', Instructions.startMenu, Instructions);
 
 
 			instructionsLogo.anchor.x = 0.5;
@@ -54,12 +54,12 @@
 
 		startGame: function () {
 			// Change the state to the actual game.
-			Instructions.state.start('Game');
+			GameInstance.state.start('Game');
 		},
 
 		startMenu: function () {
 			// Change the state to the actual game.
-			Instructions.state.start('Menu');
+			GameInstance.state.start('Menu');
 		}
 
 	};

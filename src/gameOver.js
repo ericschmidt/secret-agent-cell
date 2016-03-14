@@ -28,15 +28,15 @@
 			
 			// Add GameOver screen.
 			// It will act as a button to start the game.
-			GameOver.add.sprite(0, 0, "background");
-			gameOverLogo = GameOver.add.sprite(WIDTH / 2 , HEIGHT / 3, 'gameOverLogo', GameOver);
+			GameInstance.add.sprite(0, 0, "background");
+			gameOverLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 3, 'gameOverLogo', GameOver);
 
 			var style = { font: "30px Verdana", fill: "#111", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			text = GameOver.add.text(WIDTH / 2, HEIGHT / 2 + 20,  gameOverText, style);
+			text = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 20,  gameOverText, style);
 
 
 			
-			menuButton = GameOver.add.button(WIDTH , HEIGHT, 'menuButton', GameOver.startMenu, GameOver);
+			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', GameOver.startMenu, GameOver);
 
 
 			gameOverLogo.anchor.x = 0.5;
@@ -58,17 +58,17 @@
 
 		startGame: function () {
 			// Change the state to the actual game.
-			GameOver.state.start('Game');
+			GameInstance.state.start('Game');
 		},
 
 		startMenu: function () {
 			// Change the state to the actual game.
-			GameOver.state.start('Menu');
+			GameInstance.state.start('Menu');
 		},
 		update: function () {
 			// Change the state to the actual game.
 			if(keys.replay.isDown){
-				GameOver.state.start('Game');
+				GameInstance.state.start('Game');
 			}
 			
 		}

@@ -25,10 +25,10 @@
 			
 			// Add menu screen.
 			// It will act as a button to start the game.
-			Menu.add.sprite(0, 0, "background");
-			gameLogo = Menu.add.sprite(WIDTH / 2 , HEIGHT / 5, 'gameLogo', Menu);
-			startButton = Menu.add.button(WIDTH/2, HEIGHT/2, 'start', Menu.startGame, Menu);
-			instructionsButton = Menu.add.button(WIDTH/2, HEIGHT/2 + 100, 'instructionsButton', Menu.startInstructions, Menu);
+			GameInstance.add.sprite(0, 0, "background");
+			gameLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 5, 'gameLogo', Menu);
+			startButton = GameInstance.add.button(WIDTH/2, HEIGHT/2, 'start', Menu.startGame, Menu);
+			instructionsButton = GameInstance.add.button(WIDTH/2, HEIGHT/2 + 100, 'instructionsButton', Menu.startInstructions, Menu);
 
 
 			gameLogo.anchor.x = 0.5;
@@ -43,16 +43,15 @@
 
 		startGame: function () {
 			// Change the state to the actual game.
-			Menu.state.start('Game');
+			GameInstance.state.start('Game');
 		},
 
 		startInstructions: function () {
 			// Change the state to the instructions.
 			console.log('instruct');
-			Menu.state.start('Instructions');
+			GameInstance.state.start('Instructions');
 		}
 
 	};
 
 })();
-
