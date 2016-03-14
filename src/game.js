@@ -24,7 +24,7 @@
 	var SHOOT_TIME2 = 320; // Shooting period for bac group 3, lower value - faster shooting
 	var SPAWN_RATE = 0.3;
 	var SCORE_TICK_TIME = 100; // Score tick time, lower value, faster uptick score
-	var GEN_RATE = 0.3;
+	var GEN_RATE = 0.0;
 
 	// Game variables
 	var player;
@@ -308,7 +308,7 @@
 			player.body.velocity.y = 0;
 
 			// Increasing difficulty. GEN_RATE increases to the log of time
-			GEN_RATE = Math.log(GameInstance.time.time);
+			if(GEN_RATE < 1)	GEN_RATE += GameInstance.time.time/3000000000000000;
 
 			// Handle movement & attacking
 			if(!gameLost){
