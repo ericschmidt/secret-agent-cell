@@ -136,12 +136,12 @@
 			
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
-			healthBorder = GameInstance.add.sprite(15, GameInstance.world.height - 15 , 'health_border');
+			healthBorder = GameInstance.add.sprite(20, GameInstance.world.height - 20 , 'health_border');
 
-			healthbarDanger = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_red');
+			healthbarDanger = GameInstance.add.sprite(20, GameInstance.world.height - 20, 'health_red');
 			healthbarDanger.anchor.setTo(0, 1);
 
-			healthbar = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_white');
+			healthbar = GameInstance.add.sprite(20, GameInstance.world.height - 20, 'health_white');
 			healthbar.anchor.setTo(0, 1);
 
 			
@@ -150,7 +150,7 @@
 
 
 			// Score text
-			scoreText = GameInstance.add.text(300, 560, 'Score: 0', { font: '30px Arial', fill: '#fff' });
+			scoreText = GameInstance.add.text(300, 565, 'Score: 0', { font: '30px Arial', fill: '#fff' });
 			scoreText.anchor.setTo(0, 0.5);
 
 			// Audio
@@ -163,7 +163,7 @@
 			window.gameScore = 0;
 
 			// Adding menu button
-			menuButton = GameInstance.add.button(WIDTH, HEIGHT, 'menuButton', Game.startMenu, Game);
+			menuButton = GameInstance.add.button(WIDTH - 5, HEIGHT - 5, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
 			menuButton.anchor.y = 1.0;
 
@@ -265,12 +265,14 @@
 			}
 
 			if (health > 0){
-				healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
-				healthbarDanger.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
-				if(health < BULLET_DAMAGE){
-					healthbarDanger.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
-					healthbar.scale.setTo(0, 1);
-				}
+				
+				healthbar.alpha = (1.0* health/PLAYER_MAX_HEALTH) * (1.0* health/PLAYER_MAX_HEALTH);
+				healthbar.scale.setTo(1.0* health/PLAYER_MAX_HEALTH, 1);
+				healthbarDanger.scale.setTo(1.0* health/PLAYER_MAX_HEALTH, 1);
+				// if(health < BULLET_DAMAGE){
+				// 	healthbarDanger.scale.setTo(1.0*health/PLAYER_MAX_HEALTH, 1);
+				// 	healthbar.scale.setTo(0, 1);
+				// }
 			}
 
 
