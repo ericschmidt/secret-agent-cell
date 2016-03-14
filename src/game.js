@@ -48,11 +48,14 @@
 
 	var health;
 	var healthbar;
+	var healthbarDanger; 
 	var score;
 	var scoreText = "";
 
 	var shootSound;
 	var gameMusic;
+
+
 
 	// Phaser functions
 	var Game = window.Game = {
@@ -69,6 +72,7 @@
 			GameInstance.load.image('bullet2Small', 'assets/bac2bulletdark.png');
 			GameInstance.load.image('bullet3Small', 'assets/bac3bulletdark.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
+			GameInstance.load.image('health_white', 'assets/health_white.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
 			GameInstance.load.audio('shootSound', 'assets/bloop.wav');
@@ -133,9 +137,17 @@
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
 			healthBorder = GameInstance.add.sprite(15, GameInstance.world.height - 15 , 'health_border');
-			healthbar = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_red');
+
+			healthbarDanger = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_red');
+			healthbarDanger.anchor.setTo(0, 1);
+
+			healthbar = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_white');
 			healthbar.anchor.setTo(0, 1);
+
+			
+
 			healthBorder.anchor.setTo(0, 1);
+
 
 			// Score text
 			scoreText = GameInstance.add.text(300, 560, 'Score: 0', { font: '30px Arial', fill: '#fff' });
@@ -148,6 +160,7 @@
 
 			gameLost = false;
 			score = 0;
+			window.gameScore = 0;
 
 			// Adding menu button
 			menuButton = GameInstance.add.button(WIDTH, HEIGHT, 'menuButton', Game.startMenu, Game);
@@ -253,7 +266,16 @@
 
 			if (health > 0){
 				healthbar.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
+				healthbarDanger.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
+				if(health < BULLET_DAMAGE){
+					healthbarDanger.scale.setTo(health/PLAYER_MAX_HEALTH, 1);
+					healthbar.scale.setTo(0, 1);
+				}
 			}
+
+
+
+
 
 			// Reshrinking animator
 			shrinkCounter++;
@@ -325,6 +347,7 @@
 				gameEndTimer++;
 				if (gameEndTimer >= 50) {
 					gameMusic.stop();
+					window.gameScore = score; 
 					GameInstance.state.start('GameOver');
 				}
 			}
