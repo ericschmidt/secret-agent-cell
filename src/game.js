@@ -20,6 +20,8 @@
 	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
 	var REGEN_TIME = 50; // Regen period, lower value - faster regen
 	var SHOOT_TIME = 180; // Shooting period, lower value - faster shooting
+	var SHOOT_TIME1 = 300; // Shooting period, lower value - faster shooting
+	var SHOOT_TIME2 = 300; // Shooting period, lower value - faster shooting
 	var SPAWN_RATE = 0.3;
 	var SCORE_TICK_TIME = 100; // Score tick time, lower value, faster uptick score
 
@@ -63,7 +65,8 @@
 			GameInstance.load.spritesheet('bacteria3', 'assets/bac3.png', 33, 33);
 			GameInstance.load.spritesheet('kaboom', 'assets/explode.png', 128, 128);
 			GameInstance.load.image('bullet1Small', 'assets/bac1bullet.png');
-			//GameInstance.load.image('enemyBullet2', 'assets/bullet1.png');
+			GameInstance.load.image('bullet2Small', 'assets/bac2bullet.png');
+			GameInstance.load.image('bullet2Small', 'assets/bac2bullet.png');
 			GameInstance.load.image('health_border', 'assets/health_border.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
@@ -96,6 +99,30 @@
 			enemyBullets.setAll('outOfBoundsKill', true);
 			enemyBullets.setAll('checkWorldBounds', true);
 
+			// Enemy bullets 2 (2nd set of bullets)
+			enemyBullets2 = GameInstance.add.group();
+			enemyBullets2.enableBody = true;
+			enemyBullets2.physicsBodyType = Phaser.Physics.ARCADE;
+			enemyBullets2.createMultiple(3000, 'bullet2Small');
+			enemyBullets2.setAll('anchor.x', 0.5);
+			enemyBullets2.setAll('anchor.y', 0.5);
+			enemyBullets2.setAll('scale.x', 0.5);
+			enemyBullets2.setAll('scale.y', 0.5);
+			enemyBullets2.setAll('outOfBoundsKill', true);
+			enemyBullets2.setAll('checkWorldBounds', true);
+
+			// Enemy bullets 3 (2nd set of bullets)
+			enemyBullets3 = GameInstance.add.group();
+			enemyBullets3.enableBody = true;
+			enemyBullets3.physicsBodyType = Phaser.Physics.ARCADE;
+			enemyBullets3.createMultiple(3000, 'bullet2Small');
+			enemyBullets3.setAll('anchor.x', 0.5);
+			enemyBullets3.setAll('anchor.y', 0.5);
+			enemyBullets3.setAll('scale.x', 0.5);
+			enemyBullets3.setAll('scale.y', 0.5);
+			enemyBullets3.setAll('outOfBoundsKill', true);
+			enemyBullets3.setAll('checkWorldBounds', true);
+
 			// Create 3 groups for the bacteria strains
 			bacteriaGroups = [];
 			bacteriaGroups.push(GameInstance.add.physicsGroup());
@@ -105,7 +132,7 @@
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
 			healthBorder = GameInstance.add.sprite(15, GameInstance.world.height - 15 , 'health_border');
-			healthbar = GameInstance.add.sprite(15 + 3, GameInstance.world.height - 15 - 3, 'health_red');
+			healthbar = GameInstance.add.sprite(15, GameInstance.world.height - 15, 'health_red');
 			healthbar.anchor.setTo(0, 1);
 			healthBorder.anchor.setTo(0, 1);
 
@@ -155,21 +182,59 @@
 					d.kill();
 				}
 			});
+			enemyBullets2.forEach(function(d) {
+				if (d.y > MAX_Y){
+					d.kill();
+				}
+			});
+			enemyBullets3.forEach(function(d) {
+				if (d.y > MAX_Y){
+					d.kill();
+				}
+			});
 
 			// Handle firing counters
 			for (var i=0; i < bacteriaGroups.length; i++) {
 				bacteriaGroups[i].forEach(function(d){
 					d.counter++;
-					if (d.counter === SHOOT_TIME-100){
-						d.animations.add('shooting');
-						d.animations.play('shooting', 6, false);
+					if(i === 0){
+						if (d.counter === SHOOT_TIME-100){
+							d.animations.add('shooting');
+							d.animations.play('shooting', 6, false);
+						}
+						if (d.counter === SHOOT_TIME){
+							d.counter = 0;
+							d.frame = 0;
+							shootSound.play();
+							Game.playerChaser(d);
+							//Game.fourWay(d);
+						}
 					}
-					if (d.counter === SHOOT_TIME){
-						d.counter = 0;
-						d.frame = 0;
-						//Game.fourWay(d);
-						Game.playerChaser(d);
-						shootSound.play();
+					else if(i === 1){
+						if (d.counter === SHOOT_TIME1-100){
+							d.animations.add('shooting');
+							d.animations.play('shooting', 6, false);
+						}
+						if (d.counter === SHOOT_TIME1){
+							d.counter = 0;
+							d.frame = 0;
+							shootSound.play();
+							//Game.playerChaser(d);
+							Game.fourWay(d);
+						}
+					}
+					else{
+						if (d.counter === SHOOT_TIME2-100){
+							d.animations.add('shooting');
+							d.animations.play('shooting', 6, false);
+						}
+						if (d.counter === SHOOT_TIME2){
+							d.counter = 0;
+							d.frame = 0;
+							shootSound.play();
+							//Game.playerChaser(d);
+							Game.fourWay(d);
+						}
 					}
 				});
 			}
@@ -212,31 +277,35 @@
 				GameInstance.physics.arcade.collide(player, bacteriaGroups[i]);
 			}
 			GameInstance.physics.arcade.overlap(enemyBullets, player, Game.enemyHitsPlayer, null, Game);
+			GameInstance.physics.arcade.overlap(enemyBullets2, player, Game.enemyHitsPlayer, null, Game);
+			GameInstance.physics.arcade.overlap(enemyBullets3, player, Game.enemyHitsPlayer, null, Game);
 
 			//  Reset the player's velocity
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
 
 			// Handle movement & attacking
-			if (cursors.left.isDown || keys.a.isDown) {
-				// Move to the left
-				player.body.velocity.x = -MOVE_SPEED;
-			}
-			if (cursors.right.isDown || keys.d.isDown) {
-				// Move to the right
-				player.body.velocity.x = MOVE_SPEED;
-			}
-			if (cursors.up.isDown || keys.w.isDown) {
-				// Move up
-				player.body.velocity.y = -MOVE_SPEED;
-			}
-			if ((cursors.down.isDown || keys.s.isDown) && player.y < MAX_Y - 10) {
-				// Move down
-				player.body.velocity.y = MOVE_SPEED;
-			}
-			if (keys.attack.isDown && attackCounter > ATTACK_TIME) {
-				Game.attack();
-				player.animations.play('attack');
+			if(!gameLost){
+				if (cursors.left.isDown || keys.a.isDown) {
+					// Move to the left
+					player.body.velocity.x = -MOVE_SPEED;
+				}
+				if (cursors.right.isDown || keys.d.isDown) {
+					// Move to the right
+					player.body.velocity.x = MOVE_SPEED;
+				}
+				if (cursors.up.isDown || keys.w.isDown) {
+					// Move up
+					player.body.velocity.y = -MOVE_SPEED;
+				}
+				if ((cursors.down.isDown || keys.s.isDown) && player.y < MAX_Y - 10) {
+					// Move down
+					player.body.velocity.y = MOVE_SPEED;
+				}
+				if (keys.attack.isDown && attackCounter > ATTACK_TIME) {
+					Game.attack();
+					player.animations.play('attack');
+				}
 			}
 
 			/*//checks you win the level
@@ -371,7 +440,7 @@
 			var newBacteria = bacteriaGroups[strainNum].create(x*GRID_SIZE, y*GRID_SIZE, spriteName);
 			newBacteria.anchor.setTo(0.5, 0.5);
 			newBacteria.body.immovable = true;
-			newBacteria.counter = 0;
+			newBacteria.counter = Math.floor(Math.random()*80);
 			bacteriaGrid[x][y] = true;
 		},
 
@@ -397,6 +466,15 @@
 					}
 				});
 			}
+			for (var i=0; i < bacteriaGroups.length; i++) {
+				bacteriaGroups[i].forEach(function(bac) {
+					var dx = bac.x - player.x;
+					var dy = bac.y - player.y;
+					if (dx*dx + dy*dy < ATTACK_RADIUS_SQUARED) {
+						Game.killBacteria(bac);
+					}
+				});
+			}
 		},
 
 		// The diagonal cross shooting pattern
@@ -409,7 +487,7 @@
 
 		enemyFires: function(bacterium, angle) {
 			// Grab the first bullet we can from the pool
-			bulletInstance = enemyBullets.getFirstExists(false);
+			bulletInstance = enemyBullets2.getFirstExists(false);
 		
 			// This group fires
 			bulletInstance.reset(bacterium.body.x+20, bacterium.body.y+20);
