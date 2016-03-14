@@ -17,13 +17,14 @@
 	var MAX_Y = 510;
 	var MOVE_SPEED = 180;
 	var PLAYER_MAX_HEALTH = 100;
-	var REGEN_AMOUNT = 5; // Regen amount, how much you regen per tick
-	var REGEN_TIME = 50; // Regen period, lower value - faster regen
-	var SHOOT_TIME = 180; // Shooting period for bac group 1, lower value - faster shooting
-	var SHOOT_TIME1 = 300; // Shooting period for bac group 2, lower value - faster shooting
-	var SHOOT_TIME2 = 300; // Shooting period for bac group 3, lower value - faster shooting
+	var REGEN_AMOUNT = 10; // Regen amount, how much you regen per tick
+	var REGEN_TIME = 25; // Regen period, lower value - faster regen
+	var SHOOT_TIME = 220; // Shooting period for bac group 1, lower value - faster shooting
+	var SHOOT_TIME1 = 320; // Shooting period for bac group 2, lower value - faster shooting
+	var SHOOT_TIME2 = 320; // Shooting period for bac group 3, lower value - faster shooting
 	var SPAWN_RATE = 0.3;
 	var SCORE_TICK_TIME = 100; // Score tick time, lower value, faster uptick score
+	var GEN_RATE = 0.3;
 
 	// Game variables
 	var player;
@@ -94,8 +95,8 @@
 			enemyBullets.createMultiple(3000, 'bullet1Small');
 			enemyBullets.setAll('anchor.x', 0.5);
 			enemyBullets.setAll('anchor.y', 0.5);
-			enemyBullets.setAll('scale.x', 0.5);
-			enemyBullets.setAll('scale.y', 0.5);
+			enemyBullets.setAll('scale.x', 0.7);
+			enemyBullets.setAll('scale.y', 0.7);
 			enemyBullets.setAll('outOfBoundsKill', true);
 			enemyBullets.setAll('checkWorldBounds', true);
 
@@ -106,8 +107,8 @@
 			enemyBullets2.createMultiple(3000, 'bullet2Small');
 			enemyBullets2.setAll('anchor.x', 0.5);
 			enemyBullets2.setAll('anchor.y', 0.5);
-			enemyBullets2.setAll('scale.x', 0.5);
-			enemyBullets2.setAll('scale.y', 0.5);
+			enemyBullets2.setAll('scale.x', 0.7);
+			enemyBullets2.setAll('scale.y', 0.7);
 			enemyBullets2.setAll('outOfBoundsKill', true);
 			enemyBullets2.setAll('checkWorldBounds', true);
 
@@ -118,8 +119,8 @@
 			enemyBullets3.createMultiple(3000, 'bullet3Small');
 			enemyBullets3.setAll('anchor.x', 0.5);
 			enemyBullets3.setAll('anchor.y', 0.5);
-			enemyBullets3.setAll('scale.x', 0.5);
-			enemyBullets3.setAll('scale.y', 0.5);
+			enemyBullets3.setAll('scale.x', 0.7);
+			enemyBullets3.setAll('scale.y', 0.7);
 			enemyBullets3.setAll('outOfBoundsKill', true);
 			enemyBullets3.setAll('checkWorldBounds', true);
 
@@ -284,6 +285,9 @@
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
 
+			// Increasing difficulty. GEN_RATE increases to the log of time
+			GEN_RATE = Math.log(GameInstance.time.time);
+
 			// Handle movement & attacking
 			if(!gameLost){
 				if (cursors.left.isDown || keys.a.isDown) {
@@ -375,6 +379,13 @@
 			for (var i=0; i < perimeter.length; i++) {
 				if (Math.random() < SPAWN_RATE) {
 					Game.spawnBacteria(strainNum, perimeter[i].x, perimeter[i].y);
+				}
+			}
+			if(Math.random() < GEN_RATE){
+				var x = Math.floor(Math.random()*WIDTH/GRID_SIZE);
+				var y = Math.floor(Math.random()*HEIGHT/GRID_SIZE);
+				if(!Game.bacteriaAt(x,y) && Game.inGameBounds(x,y)){
+					Game.spawnBacteria(strainNum, x, y);
 				}
 			}
 		},
