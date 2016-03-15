@@ -161,6 +161,7 @@
 			gameLost = false;
 			score = 0;
 			window.gameScore = 0;
+			GEN_RATE = 0.1;
 
 			// Adding menu button
 			menuButton = GameInstance.add.button(WIDTH - 5, HEIGHT - 5, 'menuButton', Game.startMenu, Game);
