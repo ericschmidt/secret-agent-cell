@@ -10,7 +10,7 @@
 
 	// Game objects
 	var failText = "You have failed your mission! \n Press 'R' to replay!"
-	var score = "Score: " + window.gameScore + " ";
+	var scoreText = "Score: ";
 
 	// Phaser functions
 	var GameOver = window.GameOver = {
@@ -33,12 +33,10 @@
 			gameOverLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 3, 'gameOverLogo', GameOver);
 
 			var style = { font: "30px Verdana", fill: "#111", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 - 10,  score, style);
+			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 - 10, scoreText+window.gameScore, style);
 
-			gameOverText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 60,  failText, style);
+			gameOverText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 60, failText, style);
 
-
-			
 			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', GameOver.startMenu, GameOver);
 
 

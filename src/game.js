@@ -137,17 +137,13 @@
 			// Initialize health
 			health = PLAYER_MAX_HEALTH;
 			healthBorder = GameInstance.add.sprite(20, GameInstance.world.height - 20 , 'health_border');
+			healthBorder.anchor.setTo(0, 1);
 
 			healthbarDanger = GameInstance.add.sprite(20, GameInstance.world.height - 20, 'health_red');
 			healthbarDanger.anchor.setTo(0, 1);
 
 			healthbar = GameInstance.add.sprite(20, GameInstance.world.height - 20, 'health_white');
 			healthbar.anchor.setTo(0, 1);
-
-			
-
-			healthBorder.anchor.setTo(0, 1);
-
 
 			// Score text
 			scoreText = GameInstance.add.text(300, 565, 'Score: 0', { font: '30px Arial', fill: '#fff' });
@@ -193,17 +189,17 @@
 		
 			// Handle bullet destroy
 			enemyBullets.forEach(function(d) {
-				if (d.y > MAX_Y){
+				if (d.y > MAX_Y) {
 					d.kill();
 				}
 			});
 			enemyBullets2.forEach(function(d) {
-				if (d.y > MAX_Y){
+				if (d.y > MAX_Y) {
 					d.kill();
 				}
 			});
 			enemyBullets3.forEach(function(d) {
-				if (d.y > MAX_Y){
+				if (d.y > MAX_Y) {
 					d.kill();
 				}
 			});
@@ -212,7 +208,7 @@
 			for (var i=0; i < bacteriaGroups.length; i++) {
 				bacteriaGroups[i].forEach(function(d){
 					d.counter++;
-					if(i === 0){
+					if (i === 0) {
 						if (d.counter === SHOOT_TIME-100){
 							d.animations.add('shooting');
 							d.animations.play('shooting', 6, false);
@@ -225,25 +221,24 @@
 							//Game.fourWay(d);
 						}
 					}
-					else if(i === 1){
+					else if (i === 1) {
 						if (d.counter === SHOOT_TIME1-100){
 							d.animations.add('shooting');
 							d.animations.play('shooting', 6, false);
 						}
-						if (d.counter === SHOOT_TIME1){
+						if (d.counter === SHOOT_TIME1) {
 							d.counter = 0;
 							d.frame = 0;
 							shootSound.play();
 							//Game.playerChaser(d);
 							Game.fourWayCross(d);
 						}
-					}
-					else{
-						if (d.counter === SHOOT_TIME2-100){
+					} else {
+						if (d.counter === SHOOT_TIME2-100) {
 							d.animations.add('shooting');
 							d.animations.play('shooting', 6, false);
 						}
-						if (d.counter === SHOOT_TIME2){
+						if (d.counter === SHOOT_TIME2) {
 							d.counter = 0;
 							d.frame = 0;
 							shootSound.play();
@@ -265,7 +260,7 @@
 				regenCounter = 0;
 			}
 
-			if (health > 0){
+			if (health > 0) {
 				
 				healthbar.alpha = (1.0* health/PLAYER_MAX_HEALTH) * (1.0* health/PLAYER_MAX_HEALTH);
 				healthbar.scale.setTo(1.0* health/PLAYER_MAX_HEALTH, 1);
@@ -276,20 +271,16 @@
 				// }
 			}
 
-
-
-
-
 			// Reshrinking animator
 			shrinkCounter++;
-			if (shrinkCounter >= 4){
+			if (shrinkCounter >= 4) {
 				player.scale.setTo(1,1);
 				player.animations.play('default');
 			}
 
 			// Score increase logic
 			scoreCounter++;
-			if (scoreCounter >= SCORE_TICK_TIME){
+			if (scoreCounter >= SCORE_TICK_TIME) {
 				score += 10;
 				scoreText.text = "Score: "+score;
 				scoreCounter = 0;
@@ -310,11 +301,11 @@
 			player.body.velocity.x = 0;
 			player.body.velocity.y = 0;
 
-			// Increasing difficulty. GEN_RATE increases to the log of time
-			if(GEN_RATE < 1)	GEN_RATE += GameInstance.time.time/3000000000000000;
+			// Increasing difficulty. GEN_RATE increases quadratically with time
+			if (GEN_RATE < 1) GEN_RATE += GameInstance.time.time/3000000000000000;
 
 			// Handle movement & attacking
-			if(!gameLost){
+			if (!gameLost){
 				if (cursors.left.isDown || keys.a.isDown) {
 					// Move to the left
 					player.body.velocity.x = -MOVE_SPEED;
