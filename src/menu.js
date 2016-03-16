@@ -46,8 +46,11 @@
 			creditsButton.anchor.x = 0.5;
 			creditsButton.anchor.y = 0.5;
 
-			menuMusic = GameInstance.add.audio('menuMusic');
-			menuMusic.loopFull(0.2);
+			if(!window.menuMusicPlaying){
+				menuMusic = GameInstance.add.audio('menuMusic');
+				menuMusic.loopFull(0.2);
+			}
+			
 		},
 
 		startGame: function () {
@@ -57,13 +60,13 @@
 		},
 
 		startInstructions: function () {
-			menuMusic.stop();
+			// menuMusic.stop();
 			// Change the state to the instructions.
 			GameInstance.state.start('Instructions');
 		},
 
 		startCredits: function () {
-			menuMusic.stop();
+			// menuMusic.stop();
 			// Change the state to the instructions.
 			GameInstance.state.start('Credits');
 		}

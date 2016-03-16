@@ -21,6 +21,7 @@
 			GameInstance.load.image('creditsLogo', './assets/creditsLogo.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
 
+
 		},
 
 		create: function () {
@@ -53,13 +54,11 @@
 			menuButton.anchor.y = 1.0;
 		},
 
-		startGame: function () {
-			// Change the state to the actual game.
-			GameInstance.state.start('Game');
-		},
+
 
 		startMenu: function () {
 			// Change the state to the actual game.
+			window.menuMusicPlaying = true;
 			GameInstance.state.start('Menu');
 		}
 

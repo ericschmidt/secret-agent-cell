@@ -55,6 +55,8 @@
 	var shootSound;
 	var gameMusic;
 
+	var kaboomAdded;
+
 
 
 	// Phaser functions
@@ -75,7 +77,9 @@
 			GameInstance.load.image('health_white', 'assets/health_white.png');
 			GameInstance.load.image('health_red', 'assets/health_red.png');
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
+			GameInstance.load.image('aura', './assets/aura.png');
 			GameInstance.load.audio('shootSound', 'assets/bloop.wav');
+			GameInstance.load.audio('explosion', 'assets/explosion.wav');
 			GameInstance.load.audio('gameMusic', 'assets/game_loop.wav');
 		},
 
@@ -85,6 +89,8 @@
 
 			// The player and its settings
 			GameInstance.add.sprite(0, 0, "background");
+			aura = GameInstance.add.sprite(0, 0, 'aura');
+			aura.anchor.setTo(0.5, 0.5);
 			player = GameInstance.add.sprite(0, 0, 'player');
 			player.animations.add('attack', [1]);
 			player.animations.add('default', [0]);
@@ -146,23 +152,30 @@
 			healthbar.anchor.setTo(0, 1);
 
 			// Score text
-			scoreText = GameInstance.add.text(300, 565, 'Score: 0', { font: '30px Arial', fill: '#fff' });
+			scoreText = GameInstance.add.text(300, 565, 'Score: 0', { font: 'bolder 30px Open Sans', fill: '#fff' });
 			scoreText.anchor.setTo(0, 0.5);
+			scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
 
 			// Audio
 			shootSound = GameInstance.add.audio('shootSound');
 			gameMusic = GameInstance.add.audio('gameMusic');
+			explosionSound = GameInstance.add.audio('explosion');
 			gameMusic.loopFull(0.2);
 
 			gameLost = false;
+			kaboomAdded = false;
 			score = 0;
 			window.gameScore = 0;
 			GEN_RATE = 0.1;
 
 			// Adding menu button
-			menuButton = GameInstance.add.button(WIDTH, HEIGHT - 8, 'menuButton', Game.startMenu, Game);
+			menuButton = GameInstance.add.button(WIDTH - 5, HEIGHT - 5, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
 			menuButton.anchor.y = 1.0;
+
+			kaboom = GameInstance.add.sprite(player.x, player.y, 'kaboom');
+			kaboom.animations.add('explode', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+			kaboom.visible = false;
 
 			// Keyboard controls
 			cursors = GameInstance.input.keyboard.createCursorKeys();
@@ -178,7 +191,41 @@
 		},
 
 		update: function() {
-			// Handle bacteria growth
+
+			if (gameLost) {
+				enemyBullets.callAll('kill');
+				gameEndTimer++;
+				player.visible = false;
+				aura.visible = false;
+
+				if (!kaboomAdded){
+					
+					explosionSound.play();
+
+					kaboomAdded = true;
+					kaboom.x = player.x;
+					kaboom.y = player.y;
+					kaboom.visible = true;
+				}
+
+				// kaboom.loadTexture('kaboom');
+				kaboom.animations.play('explode', 16, false, true);
+				kaboom.anchor.setTo(0.5, 0.5);
+
+				if (gameEndTimer >= 150) {
+					gameMusic.stop();
+					explosionSound.stop();
+					window.gameScore = score; 
+					GameInstance.state.start('GameOver');
+				}
+				else{
+
+					kaboom.scale.setTo(1.0 * gameEndTimer / 5, 1.0 * gameEndTimer / 5);
+					kaboom.alpha = (1 - .005 * gameEndTimer)
+				}
+			}
+			else{
+							// Handle bacteria growth
 			growthCounter++;
 			if (growthCounter > GROWTH_TIME) {
 				Game.growBacteria(0);
@@ -337,13 +384,8 @@
 					GameInstance.state.start('LevelPassed');
 			}*/
 
-			if (gameLost) {
-				gameEndTimer++;
-				if (gameEndTimer >= 50) {
-					gameMusic.stop();
-					window.gameScore = score; 
-					GameInstance.state.start('GameOver');
-				}
+			aura.x = player.x;
+			aura.y = player.y;
 			}
 		},
 
@@ -558,11 +600,6 @@
 				
 				//  And create an explosion :)
 				healthbar.scale.setTo(0,1);
-
-				player.loadTexture('kaboom');
-				player.animations.add('boom');
-				player.animations.play('boom', 16, false, true);
-				enemyBullets.callAll('kill');
 
 				gameLost = true;
 				//GameInstance.state.start('GameOver');

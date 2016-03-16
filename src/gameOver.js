@@ -16,8 +16,7 @@
 
 	// Game objects
 	var failText = "You have failed your mission! \n Press 'R' to replay!"
-	var scoreText = "Score: ";
-
+	
 
 
 	// Phaser functions
@@ -32,7 +31,7 @@
 			GameInstance.load.image('gameOverLogo', './assets/gameOverLogo.png');
 			
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
-			
+			GameInstance.load.audio('menuMusic', 'assets/menu_loop.wav');
 
 		},
 
@@ -44,7 +43,7 @@
 			gameOverLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 3, 'gameOverLogo', GameOver);
 
 			var style = { font: "bolder 30px Open Sans", fill: "#fff", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 , scoreText+window.gameScore+' ', style);
+			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 , "Score: "+window.gameScore+' ', style);
 
 			gameOverText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 80, failText, style);
 
@@ -73,6 +72,11 @@
 			keys = GameInstance.input.keyboard.addKeys({
 				'replay': Phaser.Keyboard.R
 			});
+
+			if(!window.menuMusicPlaying){
+				menuMusic = GameInstance.add.audio('menuMusic');
+				menuMusic.loopFull(0.2);
+			}
 		},
 
 		startGame: function () {
@@ -82,6 +86,7 @@
 
 		startMenu: function () {
 			// Change the state to the actual game.
+			window.menuMusicPlaying = true;
 			GameInstance.state.start('Menu');
 		},
 		update: function () {

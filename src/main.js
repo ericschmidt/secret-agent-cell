@@ -14,7 +14,7 @@
 	// Create a new game instance (which is global so all files can access it)
 	window.GameInstance = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO);
 
-	
+	window.menuMusicPlaying = false;
 
 	// First parameter is how our state will be called.
 	// Second parameter is an object containing the needed methods for state functionality
