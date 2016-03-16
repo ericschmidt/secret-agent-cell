@@ -6,14 +6,24 @@
  * Dylan Ho, Eric Schmidt, Lisa Ruan, Erica Yuen
  */
 
+
+
 (function() {
+
+
+
+
 
 	// Game objects
 	var failText = "You have failed your mission! \n Press 'R' to replay!"
 	var scoreText = "Score: ";
 
+
+
 	// Phaser functions
 	var GameOver = window.GameOver = {
+
+
 
 		preload: function() {
 			// Load all the needed resources for the GameOver.
@@ -22,6 +32,7 @@
 			GameInstance.load.image('gameOverLogo', './assets/gameOverLogo.png');
 			
 			GameInstance.load.image('menuButton', './assets/menuLogo.png');
+			
 
 		},
 
@@ -32,12 +43,14 @@
 			GameInstance.add.sprite(0, 0, "background");
 			gameOverLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 3, 'gameOverLogo', GameOver);
 
-			var style = { font: "30px Verdana", fill: "#111", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
-			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 - 10, scoreText+window.gameScore, style);
+			var style = { font: "bolder 30px Open Sans", fill: "#fff", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
+			scoreText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 , scoreText+window.gameScore+' ', style);
 
-			gameOverText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 60, failText, style);
+			gameOverText = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 80, failText, style);
 
-			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', GameOver.startMenu, GameOver);
+			
+
+			menuButton = GameInstance.add.button(WIDTH, HEIGHT - 8, 'menuButton', GameOver.startMenu, GameOver);
 
 
 			gameOverLogo.anchor.x = 0.5;
@@ -46,9 +59,13 @@
 			gameOverText.anchor.x = 0.5;
 			gameOverText.anchor.y = 0.5;
 
+			gameOverText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
+
  	
 			scoreText.anchor.x = 0.5;
 			scoreText.anchor.y = 0.5;
+
+			scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
 
 			menuButton.anchor.x = 1.0;
 			menuButton.anchor.y = 1.0;

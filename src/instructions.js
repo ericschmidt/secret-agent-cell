@@ -31,16 +31,22 @@
 			GameInstance.add.sprite(0, 0, "background");
 			instructionsLogo = GameInstance.add.sprite(WIDTH / 2 , HEIGHT / 6, 'instructionsLogo', Instructions);
 
-			var style = { font: "18px Verdana", fill: "#000", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
+			var style = { font: "bolder 18px Open Sans", fill: "#fff", wordWrap: false, align: "center", backgroundColor: "rgba(0,0,0,0)" };
 			text = GameInstance.add.text(WIDTH / 2, HEIGHT / 2 + 30,  instructionsText, style);
 
 
+
+
 			
-			menuButton = GameInstance.add.button(WIDTH , HEIGHT, 'menuButton', Instructions.startMenu, Instructions);
+			menuButton = GameInstance.add.button(WIDTH , HEIGHT - 8, 'menuButton', Instructions.startMenu, Instructions);
 
 
 			instructionsLogo.anchor.x = 0.5;
 			instructionsLogo.anchor.y = 0.5;
+
+			text.setShadow(2, 2, 'rgba(0,0,0,0.5)', 5);
+    		
+
 
 			text.anchor.x = 0.5;
 			text.anchor.y = 0.5;

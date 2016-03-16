@@ -160,7 +160,7 @@
 			GEN_RATE = 0.1;
 
 			// Adding menu button
-			menuButton = GameInstance.add.button(WIDTH - 5, HEIGHT - 5, 'menuButton', Game.startMenu, Game);
+			menuButton = GameInstance.add.button(WIDTH, HEIGHT - 8, 'menuButton', Game.startMenu, Game);
 			menuButton.anchor.x = 1.0;
 			menuButton.anchor.y = 1.0;
 
